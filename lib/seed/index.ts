@@ -96,7 +96,7 @@ export async function seed(scenario: 'A' | 'B', log: (s: string) => void = conso
   await db.update(schema.buildVersions).set({ createdAt: at(5 * DAY) }).where(eq(schema.buildVersions.id, pr.id));
 
   // printed parts
-  const parts = [
+  const parts: { key: string; name: string; template: string; params: Record<string, string | number | boolean>; material: string; color: string; label: string }[] = [
     { key: 'intake', name: 'Intake Mount', template: 'u-bracket', params: { lengthHoles: 5, widthHoles: 2, wallHeightMm: 19, thicknessMm: 3.2, holeStyle: 'round-8-32' }, material: 'PLA', color: 'black', label: 'bracket' },
     { key: 'gear', name: 'Gear Spacer', template: 'spur-gear', params: { teeth: 18, faceWidthMm: 6.35, bore: 'shaft-1/8', hubOdMm: 10, hubLengthMm: 4 }, material: 'PLA', color: 'red', label: 'gear spacer' },
     { key: 'arm', name: 'Arm Bracket', template: 'gusset-bracket', params: { legAHoles: 4, legBHoles: 3, angleDeg: 90, thicknessMm: 3.6, lighteningHoleMm: 8 }, material: 'PETG', color: 'black', label: 'arm bracket' },

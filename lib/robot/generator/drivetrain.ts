@@ -55,7 +55,7 @@ export function buildDrivetrain(g: Gen): Frame {
   const perSide = Math.max(1, Math.round(dt.motors.count / 2));
 
   // wheel z positions (on the rail hole grid)
-  const zs = wheelsPerSide === 1 ? [0] : Array.from({ length: wheelsPerSide }, (_, i) => snapHole(-B / 2 + (i * B) / (wheelsPerSide - 1), zR));
+  const zs = Array.from({ length: wheelsPerSide }, (_, i) => snapHole(-B / 2 + (i * B) / (wheelsPerSide - 1), zR));
   const powered = new Set<number>();
   if (perSide >= wheelsPerSide) zs.forEach((_, i) => powered.add(i));
   else if (perSide === 1) powered.add(0);
