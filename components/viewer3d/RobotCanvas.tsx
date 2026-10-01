@@ -1,8 +1,8 @@
 'use client';
 import * as THREE from 'three';
-import { useEffect, useImperativeHandle, useMemo, useRef, type MutableRefObject } from 'react';
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { CameraControls, ContactShadows, Environment, Grid, Lightformer } from '@react-three/drei';
+import { CameraControls, ContactShadows, Environment, Grid, Html, Lightformer, Line } from '@react-three/drei';
 import type CameraControlsImpl from 'camera-controls';
 import type { PartInstance } from '@/lib/robot/generator/core';
 import { RobotModel, Invalidator, type ModelProps } from './RobotModel';
@@ -26,6 +26,27 @@ export interface CanvasProps extends ModelProps {
   initialPreset?: Preset;
   onReady?: () => void;
   apiRef?: MutableRefObject<ViewerApi | null>;
+  /** clip the model along an axis (inches, robot frame) */
+  section?: { axis: 'x' | 'y' | 'z'; value: number; flip?: boolean } | null;
+  /** click two points on the model to measure (inches) */
+  measure?: boolean;
+  onMeasure?: (inches: number | null) => void;
+}
+
+function MeasureMarks({ pts }: { pts: THREE.Vector3[] }) {
+  return (
+    <group renderOrder={10}>
+      {pts.map((p, i) => <mesh key={i} position={p}><sphereGeometry args={[0.18, 16, 16]} /><meshBasicMaterial color="#FCC100" depthTest={false} /></mesh>)}
+      {pts.length === 2 && (
+        <>
+          <Line points={[pts[0], pts[1]]} color="#FCC100" lineWidth={2} depthTest={false} />
+          <Html position={pts[0].clone().add(pts[1]).multiplyScalar(0.5)} center style={{ pointerEvents: 'none' }}>
+            <div style={{ background: '#121519', color: '#FCC100', padding: '3px 8px', borderRadius: 6, font: '600 12px Inter, sans-serif', whiteSpace: 'nowrap' }}>{pts[0].distanceTo(pts[1]).toFixed(2)} in</div>
+          </Html>
+        </>
+      )}
+    </group>
+  );
 }
 
 function bboxOf(parts: PartInstance[]) {
@@ -37,7 +58,10 @@ function bboxOf(parts: PartInstance[]) {
 }
 
 function Scene(props: CanvasProps) {
-  const { parts, bbox, sizingBox, reduceMotion, interactive = true, initialPreset = 'iso', onReady, apiRef } = props;
+  const { parts, bbox, sizingBox, reduceMotion, interactive = true, initialPreset = 'iso', onReady, apiRef, section, measure, onMeasure } = props;
+  const [pts, setPts] = useState<THREE.Vector3[]>([]);
+  useEffect(() => { if (!measure) setPts([]); }, [measure]);
+  useEffect(() => { onMeasure?.(pts.length === 2 ? pts[0].distanceTo(pts[1]) : null); }, [pts, onMeasure]);
   const controls = useRef<CameraControlsImpl>(null);
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
@@ -76,6 +100,15 @@ function Scene(props: CanvasProps) {
     screenshot: () => { gl.render(scene, camera); return gl.domElement.toDataURL('image/png'); },
   }));
 
+  // section plane: global clipping so every material is cut
+  useEffect(() => {
+    if (!section) { gl.clippingPlanes = []; invalidate(); return; }
+    const n = new THREE.Vector3(section.axis === 'x' ? 1 : 0, section.axis === 'y' ? 1 : 0, section.axis === 'z' ? 1 : 0).multiplyScalar(section.flip ? 1 : -1);
+    gl.clippingPlanes = [new THREE.Plane(n, section.flip ? -section.value : section.value)];
+    invalidate();
+    return () => { gl.clippingPlanes = []; };
+  }, [section?.axis, section?.value, section?.flip, gl, invalidate]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const first = useRef(true);
   useEffect(() => {
     goPreset(initialPreset, !first.current && animate);
@@ -98,7 +131,10 @@ function Scene(props: CanvasProps) {
       </Environment>
       <Grid infiniteGrid cellSize={2} sectionSize={12} cellColor="#2C3238" sectionColor="#3A4148" fadeDistance={140} fadeStrength={1.5} cellThickness={0.8} sectionThickness={1.1} position={[0, -0.001, 0]} />
       {props.quality !== 'low' && <ContactShadows opacity={0.45} blur={2.5} scale={60} far={12} resolution={512} frames={1} />}
-      <RobotModel {...props} />
+      <group onClick={measure ? (e) => { e.stopPropagation(); const p = e.point.clone(); setPts((cur) => (cur.length >= 2 ? [p] : [...cur, p])); invalidate(); } : undefined}>
+        <RobotModel {...props} />
+      </group>
+      {measure && <MeasureMarks pts={pts} />}
       {sizingBox ? (
         <mesh position={[0, sizingBox / 2, 0]}>
           <boxGeometry args={[sizingBox, sizingBox, sizingBox]} />
@@ -106,7 +142,7 @@ function Scene(props: CanvasProps) {
         </mesh>
       ) : null}
       <CameraControls ref={controls} makeDefault enabled={interactive} minDistance={6} maxDistance={180} dollyToCursor smoothTime={reduceMotion ? 0 : 0.25} />
-      <Invalidator deps={[parts, props.highlight, props.explode, props.hidden, props.showHardware, sizingBox, props.highlightUids, props.dimUids]} />
+      <Invalidator deps={[parts, props.highlight, props.explode, props.hidden, props.showHardware, sizingBox, props.highlightUids, props.dimUids, pts, section]} />
     </>
   );
 }

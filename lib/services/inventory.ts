@@ -27,3 +27,23 @@ export async function checkLowStock(item: typeof schema.inventoryItems.$inferSel
   }
   if (low !== item.wasLow) await db.update(schema.inventoryItems).set({ wasLow: low }).where(eq(schema.inventoryItems.id, item.id));
 }
+
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\b(the|a|an|vex|v5)\b/g, ' ').replace(/\s+/g, ' ').trim();
+
+/** BOM compare (spec §19): match by catalog part id, then SKU, then normalized name. */
+export async function bomCompare(buildId: string, bom: { key: string; partId: string; name: string; sku?: string; qty: number }[]) {
+  const items = await db.select().from(schema.inventoryItems);
+  const res = await db.select().from(schema.inventoryReservations);
+  const orders = await db.select().from(schema.orders).where(inArray(schema.orders.status, ['requested', 'ordered']));
+  return bom.map((r) => {
+    const item = items.find((i) => i.catalogPartId && i.catalogPartId === r.partId)
+      ?? (r.sku ? items.find((i) => i.sku && i.sku.toLowerCase() === r.sku!.toLowerCase()) : undefined)
+      ?? items.find((i) => norm(i.name) === norm(r.name));
+    const reservedHere = item ? res.filter((x) => x.itemId === item.id && x.buildId === buildId).reduce((s, x) => s + x.qty, 0) : 0;
+    const reservedOther = item ? res.filter((x) => x.itemId === item.id && x.buildId !== buildId).reduce((s, x) => s + x.qty, 0) : 0;
+    const onHand = item?.qtyOnHand ?? 0;
+    const available = Math.max(0, onHand - reservedOther);
+    const onOrder = orders.filter((o) => (item && o.itemId === item.id) || norm(o.name) === norm(r.name)).reduce((s, o) => s + o.qty, 0);
+    return { key: r.key, partId: r.partId, name: r.name, sku: r.sku ?? item?.sku ?? null, need: r.qty, itemId: item?.id ?? null, itemName: item?.name ?? null, onHand, reserved: reservedHere, available, short: Math.max(0, r.qty - available), onOrder };
+  });
+}

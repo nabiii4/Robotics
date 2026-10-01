@@ -82,6 +82,8 @@ body {
 }
 body[data-layout='a'] { background: var(--color-page-a); }
 
+/* component classes live in the components layer so Tailwind utilities can override them */
+@layer components {
 .tabular { font-variant-numeric: tabular-nums; }
 .font-display-a { font-family: var(--font-display); font-weight: 800; font-stretch: 87.5%; letter-spacing: -0.01em; }
 .font-display-b { font-family: var(--font-display); font-weight: 800; font-stretch: 100%; letter-spacing: -0.01em; }
@@ -132,6 +134,7 @@ body[data-layout='a'] { background: var(--color-page-a); }
 .md :where(a) { color: var(--color-fdr-red); text-decoration: underline; }
 .md :where(table) { border-collapse: collapse; font-size: 12.5px; margin: .4em 0; }
 .md :where(th, td) { border: 1px solid var(--color-line); padding: 3px 6px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }

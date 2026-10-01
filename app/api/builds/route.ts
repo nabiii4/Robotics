@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
+import { eq, isNotNull } from 'drizzle-orm';
 import { route, bad } from '@/lib/api';
 import { db, schema } from '@/lib/db/client';
 import { newId } from '@/lib/ids';
@@ -12,7 +12,14 @@ import { runMentor } from '@/lib/ai/mentor';
 export const runtime = 'nodejs';
 export const maxDuration = 120;
 
-export const GET = route({}, async ({ user }) => ({ builds: await listBuilds(user.id) }));
+export const GET = route({}, async ({ user, req }) => {
+  if (req.nextUrl.searchParams.get('deleted') === '1') {
+    const cutoff = Date.now() - 30 * 24 * 3600_000;
+    const rows = await db.select().from(schema.builds).where(isNotNull(schema.builds.deletedAt));
+    return { builds: rows.filter((b) => b.deletedAt!.getTime() > cutoff && (b.ownerId === user.id || user.role === 'admin')).map((b) => ({ id: b.id, name: b.name, deletedAt: b.deletedAt!.getTime() })) };
+  }
+  return { builds: await listBuilds(user.id) };
+});
 
 const Body = z.object({
   name: z.string().trim().min(1).max(60),

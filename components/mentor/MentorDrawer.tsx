@@ -9,7 +9,7 @@ import { Drawer } from '../ui/Dialog';
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '../ui/Menu';
 import { MentorChat } from './Chat';
 
-export interface BuildListItem { id: string; name: string; version: number; isTeamActive: boolean; status: string; program: string; tagline: string | null; ownerName: string; updatedAt: number; updatedBy: string; readiness: number | null; visibility: string; versionId: string | null; drawingPrefix: string }
+export interface BuildListItem { id: string; name: string; ownerId: string; version: number; isTeamActive: boolean; status: string; program: string; tagline: string | null; ownerName: string; updatedAt: number; updatedBy: string; readiness: number | null; visibility: string; versionId: string | null; drawingPrefix: string }
 
 export function useBuilds() {
   return useQuery({ queryKey: ['builds'], queryFn: () => api.get<{ builds: BuildListItem[] }>('/api/builds'), staleTime: 30_000 });

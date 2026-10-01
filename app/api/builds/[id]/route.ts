@@ -18,6 +18,7 @@ export const GET = route<P>({}, async ({ user, params }) => {
 const Body = z.object({
   name: z.string().trim().min(1).max(60).optional(), tagline: z.string().trim().max(80).nullable().optional(),
   status: z.enum(['planned', 'in_progress', 'testing', 'ready', 'archived']).optional(), visibility: z.enum(['team', 'private']).optional(),
+  autonStart: z.object({ x: z.number().min(0).max(144), y: z.number().min(0).max(144), heading: z.number().min(-720).max(720) }).optional(),
 });
 export const PATCH = route<P, typeof Body>({ body: Body }, async ({ user, params, body }) => {
   const b = await canEditBuild(params.id, user);

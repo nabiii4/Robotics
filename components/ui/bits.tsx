@@ -116,3 +116,8 @@ export function Field({ label, children, hint }: { label: string; children: Reac
     </label>
   );
 }
+
+/** Standard page body inside either layout's chrome */
+export function Page({ children, className = '', wide = false }: { children: React.ReactNode; className?: string; wide?: boolean }) {
+  return <div className={`mx-auto w-full ${wide ? 'max-w-[1640px]' : 'max-w-[1400px]'} px-4 py-6 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
+}
