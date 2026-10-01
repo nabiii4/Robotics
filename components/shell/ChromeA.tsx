@@ -120,7 +120,7 @@ export function ChromeA({ children }: { children: React.ReactNode }) {
             <NotificationBell variant="a" />
             <AvatarMenu variant="a" />
           </div>
-          {pathname === '/' && <div aria-hidden className="pointer-events-none absolute right-[24px] top-[12px] hidden text-[10.5px] font-semibold leading-[15.5px] tracking-[.32em] text-[#74767A] min-[1600px]:block">BUILD<br />CODE<br />SOLVE<br />LEAD</div>}
+          {pathname === '/' && <div aria-hidden className="pointer-events-none absolute right-[24px] top-[12px] hidden text-[10.5px] font-semibold leading-[15.5px] tracking-[.32em] text-[#74767A] 3xl:block">BUILD<br />CODE<br />SOLVE<br />LEAD</div>}
         </header>
         <main className="pb-24 md:pb-8">{children}</main>
       </div>

@@ -278,7 +278,7 @@ export function DashboardB() {
           <div className="absolute left-[75.2%] top-[19px] whitespace-nowrap text-[12px] font-semibold leading-[22.5px] tracking-[.3em] text-white">ENGINEER<br />COLLABORATE<br />INNOVATE<br />COMPETE</div>
           <div className="absolute left-[75.2%] top-[118px] h-1 w-[34px] bg-fdr-red" />
         </div>
-        <div aria-hidden className="pointer-events-none absolute right-[324px] top-[146px] hidden text-center min-[1600px]:block">
+        <div aria-hidden className="pointer-events-none absolute right-[324px] top-[146px] hidden text-center 3xl:block">
           <p className="whitespace-nowrap text-[17px] italic leading-[22px] text-ink-800">“Same Cougars. Higher Goals.”</p>
           <p className="mt-[6px] text-[11px] font-medium tracking-[.2em] text-ink-500">FDRHS ROBOTICS</p>
         </div>

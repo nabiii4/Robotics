@@ -84,7 +84,7 @@ function ActiveBuildA({ d }: { d: Dash }) {
   const visibleParts = tab === 'assembly' && derived.data ? derived.data.parts.filter((p) => { const st = derived.data!.steps.findIndex((s) => s.partUids.includes(p.uid)); return st <= step; }) : derived.data?.parts;
   const segs: [Tab, string, typeof Cube][] = [['3d', '3D Model', Cube], ['blueprint', 'Blueprint', FileText], ['assembly', 'Assembly', Wrench], ['code', 'VEX Code', Code]];
   return (
-    <section aria-label="Active Build" className="card flex flex-col rounded-[10px] min-[1600px]:h-[387px]">
+    <section aria-label="Active Build" className="card flex flex-col rounded-[10px] 3xl:h-[387px]">
       <div className="flex items-center gap-[12px] px-[15px] pt-[13px]"><GearSix size={18} weight="fill" className="text-fdr-red-bright" /><h2 className="text-[16px] font-bold leading-5 text-ink-900">Active Build</h2></div>
       <div className="relative mt-[17px] flex items-start gap-[17px] pl-[19px] pr-[15px]">
         <span className="mt-[3px] block h-[33px] w-[4px] shrink-0 rounded-[2px] bg-fdr-red-deep" />
@@ -148,7 +148,7 @@ function ActiveBuildA({ d }: { d: Dash }) {
 function QueueA({ d }: { d: Dash }) {
   const openSend = useUI((s) => s.openSendToPrinter);
   return (
-    <section aria-label="Print Queue" className="card flex flex-col rounded-[10px] min-[1600px]:h-[387px]">
+    <section aria-label="Print Queue" className="card flex flex-col rounded-[10px] 3xl:h-[387px]">
       <div className="flex items-center justify-between px-[19px] pt-[15px]">
         <h2 className="flex items-center gap-[16px] text-[16px] font-bold text-ink-900"><Printer size={18} weight="fill" className="text-fdr-red-bright" />Print Queue</h2>
         <Link href="/printer" className="text-[12px] text-ink-400 hover:text-fdr-red">{d.queue.activeCount} in queue</Link>
@@ -179,7 +179,7 @@ function QueueA({ d }: { d: Dash }) {
 
 function ActivityA({ d }: { d: Dash }) {
   return (
-    <section aria-label="Team Activity" className="card rounded-[10px] min-[1600px]:h-[264px]">
+    <section aria-label="Team Activity" className="card rounded-[10px] 3xl:h-[264px]">
       <div className="flex items-center justify-between px-[15px] pt-[12px]">
         <h2 className="flex items-center gap-[12px] text-[16px] font-bold text-ink-900"><UsersThree size={18} weight="fill" className="text-fdr-red-bright" />Team Activity</h2>
         <Link href="/team?tab=activity" className="text-[12px] font-semibold text-fdr-red hover:underline">See all</Link>
@@ -205,7 +205,7 @@ function ReadinessA({ d }: { d: Dash }) {
   const open = useUI((s) => s.setReadiness);
   const t = d.readiness.target;
   return (
-    <section aria-label="Competition Readiness" className="card rounded-[10px] min-[1600px]:h-[201px]">
+    <section aria-label="Competition Readiness" className="card rounded-[10px] 3xl:h-[201px]">
       <h2 className="flex items-center gap-[12px] px-[15px] pt-[11px] text-[16px] font-bold text-ink-900"><Target size={18} weight="bold" className="text-fdr-red-bright" />Competition Readiness</h2>
       <div className="flex items-center gap-[34px] px-[15px] pt-[14px]">
         <button onClick={() => open(true)} className="shrink-0 rounded-full" aria-label={`${d.readiness.percent}% ready — open readiness checklist`}>
@@ -252,13 +252,13 @@ function WorkspaceA({ d }: { d: Dash }) {
   const chips: [string, string][] = [['improve-intake', 'How can I improve my intake?'], ['which-motor', 'What motor should I use?'], ['explain-code', 'Explain this VEX code'], ['debug', 'Help me debug']];
   const codeStatus = !d.code || d.code.errors == null ? { dot: 'bg-ink-300', text: 'Not checked yet' } : d.code.errors ? { dot: 'bg-fdr-red', text: `${d.code.errors} error${d.code.errors > 1 ? 's' : ''}` } : { dot: 'bg-ok', text: 'No errors' };
   return (
-    <div className="grid gap-[13px] sm:grid-cols-2 xl:grid-cols-3 min-[1600px]:grid-cols-[259px_238px_249px_248px] min-[1600px]:gap-x-[13.5px]">
-      <section aria-label="Blueprints" className="card rounded-[10px] min-[1600px]:h-[208px]">
+    <div className="grid gap-[13px] sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-[259px_238px_249px_248px] 3xl:gap-x-[13.5px]">
+      <section aria-label="Blueprints" className="card rounded-[10px] 3xl:h-[208px]">
         {head(FileText, 'Blueprints', <Link href="/builds?view=blueprints" className="text-[11px] font-semibold text-fdr-red hover:underline">See all</Link>)}
         <Link href={d.build ? `/builds/${d.build.id}?tab=blueprint` : '/builds'} className="mx-[13px] mt-[7px] block h-[130px] overflow-hidden rounded-[4px]" aria-label="Open the assembly blueprint"><BlueprintThumb parts={derived.data?.parts} layout="a" className="h-full w-full" /></Link>
         <div className="px-[13px] pb-3 pt-[7px]"><div className="text-[12px] leading-4 text-ink-900">{d.build ? `${d.build.drawingPrefix}_v${d.build.version}` : '—'}</div><div className="text-[11px] leading-[15px] text-ink-400">{d.build ? `Last edited ${captionAgo(d.build.blueprintUpdatedAt, d.now)}` : ''}</div></div>
       </section>
-      <section aria-label="Parts Inventory" className="card rounded-[10px] min-[1600px]:h-[208px]">
+      <section aria-label="Parts Inventory" className="card rounded-[10px] 3xl:h-[208px]">
         {head(Package, 'Parts Inventory', <Link href="/parts" className="text-[11px] font-semibold text-fdr-red hover:underline">See all</Link>)}
         <div className="mt-[20px] px-[7px]">
           {cats.map(([k, l, Icon], i) => (
@@ -267,7 +267,7 @@ function WorkspaceA({ d }: { d: Dash }) {
           <Link href="/parts?filter=low" className="mb-3 mt-[7px] flex h-[26px] items-center gap-[8px] rounded-[4px] border border-fdr-red-100 bg-fdr-red-tint px-[8px] text-[11.5px] font-semibold text-fdr-red"><Warning size={14} weight="fill" /><span className="flex-1">Low Stock Items</span><span className="tabular">{d.inventory.low}</span></Link>
         </div>
       </section>
-      <section aria-label="VEX Code" className="card rounded-[10px] min-[1600px]:h-[208px]">
+      <section aria-label="VEX Code" className="card rounded-[10px] 3xl:h-[208px]">
         {head(Code, 'VEX Code', <Link href={d.code ? `/code?file=${d.code.fileId}` : '/code'} className="text-[11px] font-semibold text-fdr-red hover:underline">Open</Link>, 'bold')}
         <Link href={d.code ? `/code?file=${d.code.fileId}` : '/code'} className="mx-[7px] mt-[7px] block h-[131px] overflow-hidden rounded-[4px] bg-code-bg" aria-label={`Open ${d.code?.path ?? 'code'} in VEX Code`}>{d.code && <CodeMini lines={d.code.lines} fontSize={9.5} lineHeight={12} gutter={16} padTop={5.5} count={10} />}</Link>
         <div className="flex items-center justify-between px-[11px] pb-2 pt-[6px]">
@@ -275,20 +275,20 @@ function WorkspaceA({ d }: { d: Dash }) {
           <button onClick={compile} disabled={compiling || !d.build} className="btn btn-primary h-[31px] w-[88px] rounded-[5px] text-[11px]">{compiling ? <Spinner size={12} /> : <>Compile<Gear size={13} /></>}</button>
         </div>
       </section>
-      <section aria-label="AI Build Mentor" className="card relative rounded-[10px] sm:col-span-2 xl:col-span-3 min-[1600px]:col-span-1 min-[1600px]:h-[208px]">
+      <section aria-label="AI Build Mentor" className="card relative rounded-[10px] sm:col-span-2 xl:col-span-3 3xl:col-span-1 3xl:h-[208px]">
         {head(Robot, 'AI Build Mentor', <button onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="text-[11px] font-medium text-fdr-red underline underline-offset-2">Ask anything</button>)}
-        <div className="flex flex-wrap items-start gap-3 px-[9px] pb-3 min-[1600px]:block">
+        <div className="flex flex-wrap items-start gap-3 px-[9px] pb-3 3xl:block">
           <div className="shrink-0">
             <button aria-label="Open AI Build Mentor" onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="mt-[8px] block"><img src="/brand/mentor-a.png" alt="" className="h-[123px] w-[88px] object-contain" /></button>
             <div className="ml-[3px] mt-[3px] text-[8.5px] font-semibold leading-[12px] tracking-[.2em] text-ink-400">POWERED BY AI<br />BUILT BY COUGARS</div>
           </div>
           {/* bubble + chips: inside the card below 1600 px, spilling into the page at ≥1600 px (reference composition) */}
-          <div className="min-w-0 flex-1 min-[1600px]:contents">
-            <button onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="relative mt-2 block max-w-[252px] rounded-[10px] border border-[#D5D8DD] bg-white px-[13px] py-[9px] text-left text-[12.5px] leading-[16.5px] text-ink-900 shadow-[0_2px_8px_rgb(16_24_40/.05)] min-[1600px]:absolute min-[1600px]:left-[124px] min-[1600px]:top-[56px] min-[1600px]:mt-0 min-[1600px]:h-[70px] min-[1600px]:w-[252px]">
+          <div className="min-w-0 flex-1 3xl:contents">
+            <button onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="relative mt-2 block max-w-[252px] rounded-[10px] border border-[#D5D8DD] bg-white px-[13px] py-[9px] text-left text-[12.5px] leading-[16.5px] text-ink-900 shadow-[0_2px_8px_rgb(16_24_40/.05)] 3xl:absolute 3xl:left-[124px] 3xl:top-[56px] 3xl:mt-0 3xl:h-[70px] 3xl:w-[252px]">
               Hi! I&apos;m your FDR Robotics AI mentor. Ask me about your design, code, parts, or competition rules!
-              <span className="absolute -left-[6px] top-[26px] hidden h-[10px] w-[10px] rotate-45 border-b border-l border-[#D5D8DD] bg-white min-[1600px]:block" />
+              <span className="absolute -left-[6px] top-[26px] hidden h-[10px] w-[10px] rotate-45 border-b border-l border-[#D5D8DD] bg-white 3xl:block" />
             </button>
-            <div className="mt-2 flex flex-wrap gap-[11px] min-[1600px]:absolute min-[1600px]:left-[138px] min-[1600px]:top-[133px] min-[1600px]:mt-0 min-[1600px]:w-[380px] min-[1600px]:gap-y-[10px]">
+            <div className="mt-2 flex flex-wrap gap-[11px] 3xl:absolute 3xl:left-[138px] 3xl:top-[133px] 3xl:mt-0 3xl:w-[400px] 3xl:gap-y-[10px]">
               {chips.map(([id, l]) => <button key={id} onClick={() => openMentor({ message: l, chipId: id, buildId: d.build?.id ?? null, codeContext: id === 'explain-code' && d.code ? { fileId: d.code.fileId } : undefined })} className="h-[27px] whitespace-nowrap rounded-[6px] border border-[#D5D8DD] bg-white px-[14px] text-[12px] text-ink-800 hover:bg-[#F6F7F9]">{l}</button>)}
             </div>
           </div>
@@ -302,10 +302,10 @@ export function DashboardA() {
   const { data: d, isLoading } = useDashboard();
   const openNew = useUI((s) => s.setNewBuild);
   return (
-    <div className="px-4 sm:px-6 min-[1600px]:pl-[20px] min-[1600px]:pr-[16px]">
+    <div className="px-4 sm:px-6 3xl:pl-[20px] 3xl:pr-[16px]">
       {/* hero */}
-      <div className="relative min-[1600px]:h-[221px]">
-        <div className="pt-4 min-[1600px]:absolute min-[1600px]:left-[69px] min-[1600px]:top-[34px] min-[1600px]:pt-0">
+      <div className="relative 3xl:h-[221px]">
+        <div className="pt-4 3xl:absolute 3xl:left-[69px] 3xl:top-[34px] 3xl:pt-0">
           <p className="text-[13px] font-bold leading-[15px] tracking-[.14em] text-ink-900">FRANKLIN D. <span className="text-fdr-red">ROOSEVELT</span> HIGH SCHOOL</p>
           <h1 className="font-display-a mt-[7px] whitespace-nowrap text-[40px] leading-[1.05] text-ink-950 sm:text-[54px] sm:leading-[54px]">Build. <span className="text-fdr-red-bright">Code.</span> Compete.</h1>
           <p className="mt-[5px] text-[17px] leading-[22px] text-ink-600 sm:text-[19px]">Your FDR Robotics engineering hub.</p>
@@ -314,22 +314,22 @@ export function DashboardA() {
             <Link href="/printer" className="btn btn-outline h-[43px] w-[202px] border-[1.5px] border-ink-300 text-[15px]"><Printer size={19} />Open 3D Printer</Link>
           </div>
         </div>
-        <div aria-hidden className="pointer-events-none absolute left-[576px] top-[37px] hidden h-[100px] w-px bg-[#C1C2C6] min-[1600px]:block" />
-        <div aria-hidden className="pointer-events-none absolute left-[600px] top-[54px] hidden text-[10.5px] font-semibold leading-[15px] tracking-[.32em] text-[#73747D] min-[1600px]:block">STEM<br />INNOVATION<br />TEAMWORK<br />IMPACT<div className="mt-[9px] h-[3px] w-[30px] bg-fdr-red" /></div>
-        <div aria-hidden className="pointer-events-none absolute left-[796px] top-[2px] hidden h-[190px] w-[510px] opacity-80 min-[1600px]:block" style={{ maskImage: 'linear-gradient(to right, transparent 0%, #000 25%), linear-gradient(to bottom, #000 70%, transparent 100%)', maskComposite: 'intersect', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, #000 25%)' }}>
+        <div aria-hidden className="pointer-events-none absolute left-[576px] top-[37px] hidden h-[100px] w-px bg-[#C1C2C6] 3xl:block" />
+        <div aria-hidden className="pointer-events-none absolute left-[600px] top-[54px] hidden text-[10.5px] font-semibold leading-[15px] tracking-[.32em] text-[#73747D] 3xl:block">STEM<br />INNOVATION<br />TEAMWORK<br />IMPACT<div className="mt-[9px] h-[3px] w-[30px] bg-fdr-red" /></div>
+        <div aria-hidden className="pointer-events-none absolute left-[796px] top-[2px] hidden h-[190px] w-[510px] opacity-80 3xl:block" style={{ maskImage: 'linear-gradient(to right, transparent 0%, #000 25%), linear-gradient(to bottom, #000 70%, transparent 100%)', maskComposite: 'intersect', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, #000 25%)' }}>
           <SchoolSketch className="h-full w-full" />
         </div>
-        <div aria-hidden className="pointer-events-none absolute left-[1292px] top-[46px] hidden -rotate-12 whitespace-nowrap font-[family-name:var(--font-script)] text-[23px] leading-[30px] text-[#555A60] min-[1760px]:block">Cougars<br />Engineers<br />Change<br />Tomorrow</div>
-        <svg aria-hidden className="pointer-events-none absolute left-[1298px] top-[154px] hidden min-[1760px]:block" width="90" height="26" viewBox="0 0 90 26"><path d="M4 21 C 26 16, 52 10, 84 2" fill="none" stroke="#C8061C" strokeWidth="2.5" strokeLinecap="round" /></svg>
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3 min-[1600px]:absolute min-[1600px]:left-[707px] min-[1600px]:top-[133px] min-[1600px]:mt-0 min-[1600px]:flex min-[1600px]:gap-[12px]">
-          <div className="h-[62px] min-[1600px]:w-[176px]"><BrainStat variant="a" /></div>
-          <div className="h-[62px] min-[1600px]:w-[176px]"><PrinterStat variant="a" d={d} /></div>
-          <div className="h-[62px] min-[1600px]:w-[188px]"><QueueStat variant="a" d={d} /></div>
+        <div aria-hidden className="pointer-events-none absolute left-[1292px] top-[46px] hidden -rotate-12 whitespace-nowrap font-[family-name:var(--font-script)] text-[23px] leading-[30px] text-[#555A60] 4xl:block">Cougars<br />Engineers<br />Change<br />Tomorrow</div>
+        <svg aria-hidden className="pointer-events-none absolute left-[1298px] top-[154px] hidden 4xl:block" width="90" height="26" viewBox="0 0 90 26"><path d="M4 21 C 26 16, 52 10, 84 2" fill="none" stroke="#C8061C" strokeWidth="2.5" strokeLinecap="round" /></svg>
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3 3xl:absolute 3xl:left-[707px] 3xl:top-[133px] 3xl:mt-0 3xl:flex 3xl:gap-[12px]">
+          <div className="h-[62px] 3xl:w-[176px]"><BrainStat variant="a" /></div>
+          <div className="h-[62px] 3xl:w-[176px]"><PrinterStat variant="a" d={d} /></div>
+          <div className="h-[62px] 3xl:w-[188px]"><QueueStat variant="a" d={d} /></div>
         </div>
       </div>
       {/* main row */}
-      <div className="mt-5 grid gap-[13px] lg:grid-cols-2 min-[1600px]:mt-0 min-[1600px]:grid-cols-[676fr_352fr_336fr] min-[1600px]:gap-x-[14px]">
-        <div className="lg:col-span-2 min-[1600px]:col-span-1">{isLoading || !d ? <Skeleton className="h-[387px] rounded-[10px]" /> : d.build ? <ActiveBuildA d={d} /> : <section className="card flex h-[387px] items-center justify-center rounded-[10px]"><EmptyState icon={<Cube size={40} />} text="No active build yet" action={<button className="btn btn-primary h-10 px-4" onClick={() => openNew(true)}><Plus size={16} />Start a New Build</button>} /></section>}</div>
+      <div className="mt-5 grid gap-[13px] lg:grid-cols-2 3xl:mt-0 3xl:grid-cols-[676fr_352fr_336fr] 3xl:gap-x-[14px]">
+        <div className="lg:col-span-2 3xl:col-span-1">{isLoading || !d ? <Skeleton className="h-[387px] rounded-[10px]" /> : d.build ? <ActiveBuildA d={d} /> : <section className="card flex h-[387px] items-center justify-center rounded-[10px]"><EmptyState icon={<Cube size={40} />} text="No active build yet" action={<button className="btn btn-primary h-10 px-4" onClick={() => openNew(true)}><Plus size={16} />Start a New Build</button>} /></section>}</div>
         {d ? <QueueA d={d} /> : <Skeleton className="h-[387px] rounded-[10px]" />}
         <div className="flex flex-col gap-[14px]">
           {d ? <ActivityA d={d} /> : <Skeleton className="h-[264px] rounded-[10px]" />}
@@ -337,8 +337,8 @@ export function DashboardA() {
         </div>
       </div>
       {/* workspace */}
-      <div className="min-[1600px]:-mt-[132px] min-[1600px]:pl-[1px]">
-        <h2 className="mb-[9px] mt-5 flex items-center gap-[13px] pl-[16px] text-[16px] font-bold text-ink-900 min-[1600px]:mt-0"><SquaresFour size={16} weight="fill" className="text-fdr-red-bright" />Engineering Workspace</h2>
+      <div className="3xl:-mt-[79px] 3xl:pl-[1px]">
+        <h2 className="mb-[9px] mt-5 flex items-center gap-[13px] pl-[16px] text-[16px] font-bold text-ink-900 3xl:mt-0"><SquaresFour size={16} weight="fill" className="text-fdr-red-bright" />Engineering Workspace</h2>
         {d ? <WorkspaceA d={d} /> : <Skeleton className="h-[208px] rounded-[10px]" />}
       </div>
     </div>

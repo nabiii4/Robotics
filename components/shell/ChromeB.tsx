@@ -26,7 +26,7 @@ export function ChromeB({ children }: { children: React.ReactNode }) {
           <button aria-label="Open menu" onClick={() => setMenu(true)} className="absolute left-3 top-[15px] rounded-md p-1.5 text-ink-900 hover:bg-black/5 md:hidden"><List size={24} /></button>
           <Link href="/" aria-label="FDRHS Robotics — Dashboard" className="absolute left-[52px] top-[6px] md:left-[40px]"><LogoB /></Link>
           {/* ≥1440: measured tab positions; 1024–1439: icons + short labels; <1024: hamburger */}
-          <nav aria-label="Sections" className="absolute left-0 top-0 hidden h-[62px] w-full min-[1440px]:block">
+          <nav aria-label="Sections" className="absolute left-0 top-0 hidden h-[62px] w-full wide:block">
             {TABS.map(({ href, label, Icon, x, w }) => {
               const active = isActive(pathname, href);
               return (
@@ -38,7 +38,7 @@ export function ChromeB({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <nav aria-label="Sections" className="absolute left-[262px] top-0 hidden h-[62px] items-stretch md:flex min-[1440px]:hidden">
+          <nav aria-label="Sections" className="absolute left-[262px] top-0 hidden h-[62px] items-stretch md:max-wide:flex">
             {TABS.map(({ href, label, Icon }) => {
               const active = isActive(pathname, href);
               return (

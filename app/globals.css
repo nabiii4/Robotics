@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+  /* rem like the defaults so they sort after md/lg/xl/2xl: 1440 / 1600 / 1760 px */
+  --breakpoint-wide: 90rem;
+  --breakpoint-3xl: 100rem;
+  --breakpoint-4xl: 110rem;
   /* Brand red */
   --color-fdr-red: #C8061C;
   --color-fdr-red-hover: #A80515;
