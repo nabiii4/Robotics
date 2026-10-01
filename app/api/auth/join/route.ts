@@ -7,6 +7,7 @@ import { createSession } from '@/lib/auth/session';
 import { rateLimit } from '@/lib/auth/rateLimit';
 import { sha256 } from '@/lib/crypto';
 import { newId } from '@/lib/ids';
+import { logActivity, notifyRoles } from '@/lib/services/activity';
 
 export const runtime = 'nodejs';
 const COLORS = ['#1B67C6', '#C11A0E', '#1C9E4B', '#643DBC', '#EA8111', '#0E7490', '#C2185B'];
@@ -31,6 +32,8 @@ export const POST = route({ auth: false, body: Body }, async ({ req, body }) => 
     id, username, displayName: body.displayName, avatarColor: COLORS[count % COLORS.length], role: 'member', teamRole: body.teamRole, grade: body.grade || null,
     passwordHash: await hashPassword(body.password), prefs: { layout: 'b', memoryEnabled: true, replyLength: 'concise', quality: 'medium' }, createdAt: new Date(), lastActiveAt: new Date(),
   });
+  await logActivity({ type: 'member.joined', actorId: id, entityType: 'user', entityId: id });
+  await notifyRoles(['admin'], { type: 'team.joined', title: `${body.displayName} joined the team`, body: `Team role: ${body.teamRole}`, link: '/team' });
   await createSession(id, false);
   return { ok: true };
 });

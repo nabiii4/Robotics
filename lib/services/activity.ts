@@ -43,7 +43,18 @@ export function describe(row: ActivityRow, actorName: string): { parts: Activity
     case 'build.created': return { parts: [who, { t: ` started a new build: ${d.build}` }], href: `/builds/${row.entityId}` };
     case 'competition.target': return { parts: [who, { t: ` set ${d.event} as the target` }], href: `/competitions/${row.entityId}` };
     case 'order.received': return { parts: [who, { t: ` received ${d.qty} × ${d.name}` }], href: '/parts?tab=orders' };
-    default: return { parts: [who, { t: ` ${row.type}` }], href: '/' };
+    case 'print.canceled': return { parts: [who, { t: ` canceled ${d.job ?? 'a print'}` }], href: `/printer?job=${row.entityId}` };
+    case 'print.failed': return { parts: [{ t: `${d.job ?? 'A print'} failed` }, { t: d.reason ? ` (${d.reason})` : '' }], href: `/printer?job=${row.entityId}` };
+    case 'part.created': return { parts: [who, { t: ` designed a printed ${d.part ?? 'part'} for ${d.build ?? 'a build'}` }], href: `/builds/${d.buildId}?tab=parts` };
+    case 'inventory.adjusted': return { parts: [who, { t: ` ${Number(d.delta) >= 0 ? 'added' : 'used'} ${Math.abs(Number(d.delta ?? 0))} × ${d.name ?? 'parts'}` }], href: `/parts?item=${row.entityId}` };
+    case 'inventory.reserved': return { parts: [who, { t: ` reserved parts for ${d.build ?? 'a build'}` }], href: '/parts?tab=bom' };
+    case 'order.requested': return { parts: [who, { t: ` asked to order ${d.qty} × ${d.name}` }], href: '/parts?tab=orders' };
+    case 'order.ordered': return { parts: [who, { t: ` ordered ${d.qty} × ${d.name}` }], href: '/parts?tab=orders' };
+    case 'task.created': return { parts: [who, { t: ` added a task: ${d.title}` }], href: `/team?tab=tasks&task=${row.entityId}` };
+    case 'member.joined': return { parts: [who, { t: ' joined the team' }], href: '/team' };
+    case 'competition.created': return { parts: [who, { t: ` added ${d.event} to competitions` }], href: `/competitions/${row.entityId}` };
+    case 'build.archived': return { parts: [who, { t: ` archived ${d.build}` }], href: `/builds/${row.entityId}` };
+    default: return { parts: [who, { t: ` ${row.type.replace(/[._]/g, ' ')}` }], href: '/' };
   }
 }
 

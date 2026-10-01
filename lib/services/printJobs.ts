@@ -55,3 +55,58 @@ export async function createPrintJob(a: {
   await tickPrinters(true);
   return { id, estimate: est };
 }
+
+// ---------- files, thumbnails, actions ----------
+const thumbCache = new Map<string, Buffer>();
+
+async function sourceKey(src: { customPartId?: string | null; uploadId?: string | null }) {
+  if (src.customPartId) {
+    const p = await db.query.customParts.findFirst({ where: eq(schema.customParts.id, src.customPartId) });
+    return p ? `p:${p.id}:${p.updatedAt.getTime()}` : null;
+  }
+  return src.uploadId ? `u:${src.uploadId}` : null;
+}
+
+export async function sourceThumb(src: { customPartId?: string | null; uploadId?: string | null }, color: string, W = 200, H = 150) {
+  const key = `${await sourceKey(src)}:${color}:${W}x${H}`;
+  const hit = thumbCache.get(key);
+  if (hit) return hit;
+  const mesh = await meshForJobSource(src);
+  const { renderThumbnail } = await import('../printing/thumbnail');
+  const png = renderThumbnail(mesh, color || mesh.color, W, H);
+  if (thumbCache.size > 300) thumbCache.clear();
+  thumbCache.set(key, png);
+  return png;
+}
+
+export async function sourceFile(src: { customPartId?: string | null; uploadId?: string | null }, name: string) {
+  if (src.uploadId && !src.customPartId) {
+    const up = await db.query.uploads.findFirst({ where: eq(schema.uploads.id, src.uploadId) });
+    if (!up) throw bad('That file no longer exists.');
+    return { buf: fs.readFileSync(path.join(path.resolve(env().UPLOAD_DIR), up.storageKey)), filename: up.filename, mime: up.mime };
+  }
+  const mesh = await meshForJobSource(src);
+  const { toStl } = await import('../printing/geometry');
+  return { buf: toStl(mesh, name), filename: `${name.replace(/[^\w.-]+/g, '_')}.stl`, mime: 'model/stl' };
+}
+
+/** Upload the job's file to a real printer and start it (OctoPrint / Moonraker, spec §17.6). */
+export async function startOnRemote(pr: typeof schema.printers.$inferSelect, j: typeof schema.printJobs.$inferSelect) {
+  const { octoprintUpload, moonrakerUpload } = await import('../printing/adapters');
+  const f = await sourceFile(j, j.name);
+  if (pr.adapter === 'octoprint') await octoprintUpload(pr, f.filename, f.buf);
+  else await moonrakerUpload(pr, f.filename, f.buf);
+}
+
+export async function remoteCommand(printerId: string | null, cmd: 'pause' | 'resume' | 'cancel') {
+  if (!printerId) return;
+  const pr = await db.query.printers.findFirst({ where: eq(schema.printers.id, printerId) });
+  if (!pr || pr.adapter === 'simulated') return;
+  const { octoprintCommand, moonrakerCommand } = await import('../printing/adapters');
+  try {
+    if (pr.adapter === 'octoprint') await octoprintCommand(pr, cmd);
+    else await moonrakerCommand(pr, cmd);
+  } catch (e) {
+    throw bad(`${pr.name} did not accept "${cmd}" (${(e as Error).message}).`);
+  }
+}

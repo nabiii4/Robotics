@@ -97,6 +97,7 @@ export const useBrain = create<BrainState>((set, get) => ({
   },
   disconnect: async () => {
     clearInterval(presenceTimer);
+    presence(null);
     try { await reader?.cancel(); } catch { /* ignore */ }
     try { await port?.close(); } catch { /* ignore */ }
     port = null; reader = null;

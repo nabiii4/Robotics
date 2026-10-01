@@ -6,8 +6,15 @@ import { octoprintStatus, moonrakerStatus, type RemoteStatus } from '../printing
 export type JobRow = typeof schema.printJobs.$inferSelect;
 export type PrinterRow = typeof schema.printers.$inferSelect;
 
+/** Latest status reported by real (OctoPrint / Moonraker) printers, keyed by printer id */
+export const remoteStatus = new Map<string, RemoteStatus & { at: number }>();
+
 export function jobProgress(j: JobRow, now = Date.now()): { progress: number; remainingSec: number } {
   if (j.status === 'completed') return { progress: 1, remainingSec: 0 };
+  const rs = j.printerId ? remoteStatus.get(j.printerId) : undefined;
+  if (rs && (j.status === 'printing' || j.status === 'paused') && rs.progress != null) {
+    return { progress: Math.min(1, Math.max(0, rs.progress)), remainingSec: rs.remainingSec ?? Math.round(j.estSeconds * (1 - rs.progress)) };
+  }
   if (!j.startedAt || j.status === 'queued') return { progress: 0, remainingSec: j.estSeconds };
   const endRef = j.status === 'paused' && j.pausedAt ? j.pausedAt.getTime() : now;
   const elapsed = Math.max(0, (endRef - j.startedAt.getTime() - j.pausedMs) / 1000);
@@ -33,6 +40,21 @@ export async function tickPrinters(force = false) {
     try { st = pr.adapter === 'octoprint' ? await octoprintStatus(pr) : await moonrakerStatus(pr); } catch { st = null; }
     await db.update(schema.printers).set({ online: !!st, lastSeenAt: st ? now : pr.lastSeenAt }).where(eq(schema.printers.id, pr.id));
     pr.online = !!st;
+    if (st) remoteStatus.set(pr.id, { ...st, at: nowMs }); else remoteStatus.delete(pr.id);
+    // a job we started there: finished or errored?
+    const j = active.find((x) => x.printerId === pr.id && x.status === 'printing');
+    if (st && j && j.startedAt && nowMs - j.startedAt.getTime() > 60_000) {
+      if (st.state === 'idle') {
+        await db.update(schema.printJobs).set({ status: 'completed', finishedAt: now, history: push(j, 'completed', undefined, pr.name) }).where(eq(schema.printJobs.id, j.id));
+        j.status = 'completed';
+        await notify(j.requestedBy, { type: 'print.completed', title: `${j.name} finished printing`, body: `${j.quantity} × ${j.name} on ${pr.name}`, link: `/printer?job=${j.id}` });
+        await logActivity({ type: 'print.completed', actorId: null, entityType: 'job', entityId: j.id, data: { job: j.name } });
+      } else if (st.state === 'error') {
+        await db.update(schema.printJobs).set({ status: 'failed', finishedAt: now, failReason: 'Printer reported an error', history: push(j, 'failed', undefined, 'Printer reported an error') }).where(eq(schema.printJobs.id, j.id));
+        j.status = 'failed';
+        await notify(j.requestedBy, { type: 'print.failed', title: `${j.name} failed`, body: `${pr.name} reported an error.`, link: `/printer?job=${j.id}` });
+      }
+    }
   }
   // complete simulated jobs
   for (const j of active) {
@@ -57,6 +79,17 @@ export async function tickPrinters(force = false) {
     const pr = candidates[0];
     if (!pr) continue;
     busy.add(pr.id);
+    if (pr.adapter !== 'simulated') {
+      // send the file to the real printer; if that fails, leave the job queued and mark the printer offline
+      try {
+        const { startOnRemote } = await import('./printJobs');
+        await startOnRemote(pr, j);
+      } catch (e) {
+        await db.update(schema.printers).set({ online: false }).where(eq(schema.printers.id, pr.id));
+        await db.update(schema.printJobs).set({ history: push(j, 'queued', undefined, `Could not start on ${pr.name}: ${(e as Error).message}`) }).where(eq(schema.printJobs.id, j.id));
+        continue;
+      }
+    }
     await db.update(schema.printJobs).set({ status: 'printing', printerId: pr.id, startedAt: now, pausedMs: 0, history: push(j, 'printing', undefined, pr.name) }).where(eq(schema.printJobs.id, j.id));
   }
 }
