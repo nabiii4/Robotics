@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const Env = z.object({
   NODE_ENV: z.string().default('development'),
-  APP_URL: z.string().default('http://localhost:3000'),
+  APP_URL: z.string().default(''),
   APP_ENCRYPTION_KEY: z.string().default(''),
   DATABASE_URL: z.string().default('file:./data/fdrhs.db'),
   DATABASE_AUTH_TOKEN: z.string().default(''),
@@ -36,6 +36,13 @@ export type EnvT = z.infer<typeof Env>;
 let cached: EnvT | null = null;
 /** Server-only environment (never import from client components). */
 export function env(): EnvT {
-  if (!cached) cached = Env.parse(process.env);
+  if (!cached) {
+    cached = Env.parse(process.env);
+    // hosting platforms publish the public URL themselves; fall back to it when APP_URL isn't set
+    if (!cached.APP_URL) {
+      const railway = process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : '';
+      cached.APP_URL = process.env.RENDER_EXTERNAL_URL || railway || 'http://localhost:3000';
+    }
+  }
   return cached;
 }

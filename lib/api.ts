@@ -2,6 +2,7 @@ import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { z, ZodError } from 'zod';
 import { currentUser, type SessionUser } from './auth/session';
+import { env } from './env';
 
 export class ApiError extends Error {
   constructor(public status: number, public code: string, message: string, public details?: unknown) { super(message); }
@@ -25,7 +26,7 @@ function sameOrigin(req: NextRequest): boolean {
   try {
     const o = new URL(origin);
     if (o.host === host) return true;
-    const app = process.env.APP_URL ? new URL(process.env.APP_URL) : null;
+    const app = env().APP_URL ? new URL(env().APP_URL) : null;
     return !!app && o.host === app.host;
   } catch {
     return false;

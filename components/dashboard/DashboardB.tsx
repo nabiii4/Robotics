@@ -112,7 +112,7 @@ function QueueB({ d, refresh }: { d: Dash; refresh: () => void }) {
   return (
     <section aria-label="Print Queue" className="card flex flex-col rounded-[12px] xl:h-[480px]">
       <div className="flex items-center justify-between px-[20px] pt-[15px]">
-        <h2 className="flex items-center gap-[19px] text-[17px] font-bold text-ink-900"><Printer size={20} weight="fill" className="text-fdr-red-bright" />Print Queue</h2>
+        <h2 className="flex items-center gap-[19px] whitespace-nowrap text-[17px] font-bold text-ink-900"><Printer size={20} weight="fill" className="text-fdr-red-bright" />Print Queue</h2>
         <Link href="/printer" className="flex h-[28px] w-[73px] items-center justify-center rounded-[6px] border border-[#D0D3D8] text-[13px] font-medium text-ink-900 hover:bg-[#F6F7F9]">View All</Link>
       </div>
       <div className="mt-[14px] flex-1 px-[14px]">
@@ -261,7 +261,7 @@ export function DashboardB() {
       <div className="relative xl:h-[210px]">
         <div className="pt-6 xl:absolute xl:left-[11px] xl:top-[25px] xl:pt-0">
           <p className="text-[13px] font-medium uppercase leading-[15px] tracking-[.16em] text-[#44474F]">Franklin D. Roosevelt High School</p>
-          <h1 className="font-display-b mt-[8px] whitespace-nowrap text-[40px] leading-[1.05] text-ink-950 sm:text-[56px] sm:leading-[56px]">Build. <span className="text-fdr-red-bright">Code.</span> Compete.</h1>
+          <h1 className="font-display-b mt-[8px] whitespace-nowrap text-[40px] leading-[1.05] text-ink-950 sm:text-[56px] sm:leading-[56px] xl:text-[46px] xl:leading-[50px] 3xl:text-[56px] 3xl:leading-[56px]">Build. <span className="text-fdr-red-bright">Code.</span> Compete.</h1>
           <p className="mt-[2px] text-[17px] leading-[22px] text-ink-600 sm:text-[19px]">Your <span className="font-semibold text-ink-900">FDR Robotics</span> engineering hub.</p>
           <div className="mt-[15px] flex flex-wrap gap-[19px]">
             <button onClick={() => openNew(true)} className="btn btn-primary h-[47px] w-[244px] text-[16px] shadow-[0_1px_2px_rgb(200_6_28/.25)]"><Plus size={18} weight="bold" />Start a New Build<ArrowRight size={18} /></button>
@@ -273,7 +273,7 @@ export function DashboardB() {
           <div className="h-[63px] xl:w-[158px]"><PrinterStat variant="b" d={d} /></div>
           <div className="h-[63px] xl:w-[162px]"><QueueStat variant="b" d={d} /></div>
         </div>
-        <div aria-hidden className="pointer-events-none absolute right-[-32px] top-0 hidden h-[184px] w-[min(532px,33.2%)] overflow-hidden xl:block">
+        <div aria-hidden className="pointer-events-none absolute right-[-32px] top-0 hidden h-[184px] w-[min(532px,26%)] overflow-hidden wide:block 3xl:w-[min(532px,33.2%)]">
           <HubBanner className="h-full w-full" />
           <div className="absolute left-[75.2%] top-[19px] whitespace-nowrap text-[12px] font-semibold leading-[22.5px] tracking-[.3em] text-white">ENGINEER<br />COLLABORATE<br />INNOVATE<br />COMPETE</div>
           <div className="absolute left-[75.2%] top-[118px] h-1 w-[34px] bg-fdr-red" />

@@ -1,7 +1,6 @@
-import type { NextConfig } from 'next';
-
 const isProd = process.env.NODE_ENV === 'production';
 
+// Plain JS (not .ts) so the production image can start without TypeScript installed.
 // Monaco's loader fetches the editor from cdn.jsdelivr.net; if that host is blocked the IDE falls back to a plain editor.
 const csp = [
   "default-src 'self'",
@@ -14,7 +13,8 @@ const csp = [
   "frame-ancestors 'self'", // PDFs and text files preview in same-origin iframes
 ].join('; ');
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['manifold-3d', '@libsql/client', 'libsql', 'unpdf'],
   eslint: { ignoreDuringBuilds: true },

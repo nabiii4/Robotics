@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { eq, isNotNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { route, bad } from '@/lib/api';
 import { db, schema } from '@/lib/db/client';
 import { newId } from '@/lib/ids';
@@ -39,7 +39,9 @@ export const POST = route({ body: Body }, async ({ user, body }) => {
   const now = new Date();
   const prefix = body.name.replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 30) || 'Robot';
   const season = body.program === 'Practice' ? 'practice' : body.program === 'V5RC' ? 'v5rc-2026-27-override' : 'vexu-2026-27';
-  await db.insert(schema.builds).values({ id, name: body.name, tagline: body.tagline || null, drawingPrefix: prefix, program: body.program, seasonProfileId: season, status: 'planned', visibility: body.visibility, ownerId: user.id, isTeamActive: false, createdAt: now, updatedAt: now });
+  // a team's first shared build becomes the Active Build shown on everyone's dashboard
+  const hasActive = await db.query.builds.findFirst({ where: and(eq(schema.builds.isTeamActive, true), isNull(schema.builds.deletedAt)) });
+  await db.insert(schema.builds).values({ id, name: body.name, tagline: body.tagline || null, drawingPrefix: prefix, program: body.program, seasonProfileId: season, status: 'planned', visibility: body.visibility, ownerId: user.id, isTeamActive: !hasActive && body.visibility === 'team', createdAt: now, updatedAt: now });
   const withMeta = (spec: Record<string, unknown>) => ({ ...spec, meta: { ...(spec.meta as object), name: body.name, program: body.program } });
   let source: 'template' | 'import' | 'user' | 'ai' = 'template';
   let spec: unknown;

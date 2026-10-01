@@ -4,6 +4,7 @@ import { and, eq, gt } from 'drizzle-orm';
 import { db, schema } from '../db/client';
 import { newId } from '../ids';
 import { randomToken, sha256 } from '../crypto';
+import { env } from '../env';
 
 export const COOKIE = 'fdr_session';
 const DAY = 24 * 3600 * 1000;
@@ -14,9 +15,11 @@ export async function createSession(userId: string, keep: boolean) {
   const token = randomToken(32);
   const now = Date.now();
   const expires = new Date(now + (keep ? 30 * DAY : 12 * 3600 * 1000));
-  const ua = (await headers()).get('user-agent')?.slice(0, 200) ?? null;
+  const h = await headers();
+  const ua = h.get('user-agent')?.slice(0, 200) ?? null;
+  const https = env().APP_URL.startsWith('https') || h.get('x-forwarded-proto') === 'https';
   await db.insert(schema.sessions).values({ id: newId(), userId, tokenHash: sha256(token), createdAt: new Date(now), expiresAt: expires, keepSignedIn: keep, userAgent: ua });
-  (await cookies()).set(COOKIE, token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' && process.env.APP_URL?.startsWith('https'), path: '/', expires });
+  (await cookies()).set(COOKIE, token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' && https, path: '/', expires });
 }
 
 export async function currentSession() {

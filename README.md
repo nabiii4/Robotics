@@ -30,7 +30,9 @@ On the first run, the seed writes **`data/seed-credentials.txt`**. It contains:
 
 New students sign up at `/join` with the join code.
 
-To run in production:
+**To put it online for the team, see [DEPLOY.md](DEPLOY.md)**. It covers Render or Railway (about 10 minutes in the browser) and a free option on a school computer with Docker.
+
+To run in production yourself:
 
 ```bash
 npm run build

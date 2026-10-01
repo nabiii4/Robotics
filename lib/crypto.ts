@@ -6,6 +6,8 @@ function key(): Buffer {
   if (k) {
     const b = Buffer.from(k, 'base64');
     if (b.length === 32) return b;
+    // any other secret string (e.g. a platform-generated value) is stretched to 32 bytes
+    return crypto.createHash('sha256').update(k).digest();
   }
   // development fallback: derived from the database URL (set APP_ENCRYPTION_KEY in production)
   return crypto.createHash('sha256').update(`fdrhs-dev:${env().DATABASE_URL}`).digest();
