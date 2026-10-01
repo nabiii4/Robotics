@@ -16,6 +16,7 @@ export async function activeSeason(): Promise<SeasonRules> {
 }
 
 const derivedCache = new Map<string, Derived>();
+export const clearDerivedCache = () => derivedCache.clear();
 
 export async function printedPartsFor(buildId: string): Promise<{ name: string; legality: Legality }[]> {
   const rows = await db.select({ name: schema.customParts.name, legality: schema.customParts.legality }).from(schema.customParts).where(eq(schema.customParts.buildId, buildId));

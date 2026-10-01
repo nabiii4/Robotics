@@ -116,10 +116,10 @@ export const useBrain = create<BrainState>((set, get) => ({
 // ---------- dialogs opened from anywhere ----------
 interface UIState {
   newBuild: boolean;
-  sendToPrinter: { open: boolean; partId?: string; buildId?: string; qty?: number };
+  sendToPrinter: { open: boolean; partId?: string; buildId?: string; qty?: number; uploadId?: string };
   readiness: boolean;
   setNewBuild: (o: boolean) => void;
-  openSendToPrinter: (o?: { partId?: string; buildId?: string; qty?: number }) => void;
+  openSendToPrinter: (o?: { partId?: string; buildId?: string; qty?: number; uploadId?: string }) => void;
   closeSendToPrinter: () => void;
   setReadiness: (o: boolean) => void;
 }

@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull, lt, or } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, like, lt, or } from 'drizzle-orm';
 import { db, schema } from '../db/client';
 import { newId } from '../ids';
 
@@ -62,7 +62,7 @@ export async function recentActivity(viewerId: string, opts: { limit?: number; b
   const limit = opts.limit ?? 20;
   const conds = [or(isNull(schema.activity.privateTo), eq(schema.activity.privateTo, viewerId))];
   if (opts.before) conds.push(lt(schema.activity.createdAt, new Date(opts.before)));
-  if (opts.type) conds.push(eq(schema.activity.type, opts.type));
+  if (opts.type) conds.push(opts.type.includes('.') ? eq(schema.activity.type, opts.type) : like(schema.activity.type, `${opts.type}.%`));
   if (opts.actorId) conds.push(eq(schema.activity.actorId, opts.actorId));
   const rows = await db.select().from(schema.activity).where(and(...conds)).orderBy(desc(schema.activity.createdAt)).limit(limit);
   const ids = [...new Set(rows.map((r) => r.actorId).filter(Boolean) as string[])];

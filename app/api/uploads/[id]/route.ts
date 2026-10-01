@@ -8,6 +8,13 @@ import { indexUpload } from '@/lib/ai/knowledge';
 export const runtime = 'nodejs';
 export const maxDuration = 120;
 
+export const GET = route<{ id: string }>({}, async ({ params }) => {
+  const up = await db.query.uploads.findFirst({ where: eq(schema.uploads.id, params.id) });
+  if (!up) throw notFound('That file no longer exists.');
+  const owner = await db.query.users.findFirst({ where: eq(schema.users.id, up.ownerId) });
+  return { upload: { id: up.id, filename: up.filename, title: up.title, category: up.category, kind: up.kind, mime: up.mime, size: up.size, useForAi: up.useForAi, ownerId: up.ownerId, ownerName: owner?.displayName ?? 'Someone', createdAt: up.createdAt.getTime() } };
+});
+
 const Patch = z.object({ title: z.string().trim().max(120).nullable().optional(), category: z.string().trim().max(40).nullable().optional(), useForAi: z.boolean().optional() });
 
 export const PATCH = route<{ id: string }, typeof Patch>({ body: Patch }, async ({ params, body, user }) => {

@@ -50,10 +50,10 @@ export function SendToPrinterDialog() {
 
   useEffect(() => {
     if (!st.open) return;
-    setSrc('part'); setPartId(st.partId ?? ''); setUploadId(''); setQty(st.qty ?? 1); setPrinterId(''); setNotes(''); setEst(null); setEstErr(null); setBusy(false);
-  }, [st.open, st.partId, st.buildId, st.qty]);
+    setSrc(st.uploadId ? 'upload' : 'part'); setPartId(st.partId ?? ''); setUploadId(st.uploadId ?? ''); setQty(st.qty ?? 1); setPrinterId(''); setNotes(''); setEst(null); setEstErr(null); setBusy(false);
+  }, [st.open, st.partId, st.buildId, st.qty, st.uploadId]);
   useEffect(() => {
-    if (!st.open || !sources.data) return;
+    if (!st.open || !sources.data || st.uploadId) return;
     const list = sources.data.parts.filter((p) => !st.buildId || p.buildId === st.buildId);
     const chosen = sources.data.parts.find((p) => p.id === partId) ?? (!partId ? list[0] ?? sources.data.parts[0] : undefined);
     if (chosen && chosen.id !== partId) setPartId(chosen.id);
