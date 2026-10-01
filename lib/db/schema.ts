@@ -178,6 +178,13 @@ export const uploads = sqliteTable('uploads', {
   createdAt: ts('created_at').notNull(),
 });
 
+/** File bytes for uploads, split into chunks so they fit any libSQL/Turso request size. */
+export const uploadChunks = sqliteTable('upload_chunks', {
+  uploadId: text('upload_id').notNull(),
+  idx: integer('idx').notNull(),
+  data: blob('data', { mode: 'buffer' }).notNull(),
+}, (t) => [primaryKey({ columns: [t.uploadId, t.idx] })]);
+
 export const inventoryItems = sqliteTable('inventory_items', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

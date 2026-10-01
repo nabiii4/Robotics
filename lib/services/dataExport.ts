@@ -3,8 +3,9 @@ import { getClient } from '../db/client';
 import { bad } from '../api';
 
 // raw-SQL export/import so every column round-trips exactly (timestamps stay epoch ms, JSON stays text)
-const EXPORT_SKIP = new Set(['sessions', 'rate_limits', '__drizzle_migrations']);
-const IMPORT_SKIP = new Set(['users', 'sessions', 'rate_limits', 'team', '__drizzle_migrations']);
+// uploaded file bytes are left out (too large for a JSON export); use the database backup for those
+const EXPORT_SKIP = new Set(['sessions', 'rate_limits', '__drizzle_migrations', 'upload_chunks']);
+const IMPORT_SKIP = new Set(['users', 'sessions', 'rate_limits', 'team', '__drizzle_migrations', 'upload_chunks']);
 const DROP_COLS: Record<string, string[]> = { users: ['password_hash'], memories: ['embedding'], knowledge_chunks: ['embedding'] };
 
 async function tables() {

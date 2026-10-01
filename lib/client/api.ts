@@ -7,6 +7,7 @@ export class ClientError extends Error {
 async function handle<T>(r: Response): Promise<T> {
   const ct = r.headers.get('content-type') ?? '';
   const data = ct.includes('application/json') ? await r.json() : await r.text();
+  if (r.status === 413) throw new ClientError(413, 'That file is too big for this server. On the free hosting plan, uploads can be up to 4 MB.');
   if (!r.ok) {
     const e = (data as { error?: { message?: string; code?: string; details?: unknown } })?.error;
     if (r.status === 401 && typeof window !== 'undefined' && !location.pathname.startsWith('/login')) location.href = `/login?next=${encodeURIComponent(location.pathname)}`;

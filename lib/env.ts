@@ -38,10 +38,15 @@ let cached: EnvT | null = null;
 export function env(): EnvT {
   if (!cached) {
     cached = Env.parse(process.env);
+    // Turso's Vercel integration names its variables TURSO_*
+    if (!process.env.DATABASE_URL?.trim()) cached.DATABASE_URL = process.env.TURSO_DATABASE_URL?.trim() || 'file:./data/fdrhs.db';
+    cached.DATABASE_URL = cached.DATABASE_URL.trim();
+    if (!cached.DATABASE_AUTH_TOKEN && process.env.TURSO_AUTH_TOKEN) cached.DATABASE_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN;
     // hosting platforms publish the public URL themselves; fall back to it when APP_URL isn't set
     if (!cached.APP_URL) {
       const railway = process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : '';
-      cached.APP_URL = process.env.RENDER_EXTERNAL_URL || railway || 'http://localhost:3000';
+      const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '';
+      cached.APP_URL = process.env.RENDER_EXTERNAL_URL || railway || vercel || 'http://localhost:3000';
     }
   }
   return cached;

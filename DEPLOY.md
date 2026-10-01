@@ -1,7 +1,5 @@
 # Deploying FDRHS Robotics Hub
 
-The Hub is one Docker container: the website, the API, a SQLite database and uploaded files. The only hard requirement is a **persistent disk mounted at `/app/data`**. Without it, every redeploy wipes the team's builds, accounts and files.
-
 On its first start, a fresh deployment creates:
 - the team;
 - one admin account (`coach`);
@@ -10,19 +8,58 @@ On its first start, a fresh deployment creates:
 
 It creates no fake students or sample data. (Set `SEED_SCENARIO=B` if you want the demo data instead.)
 
-| Option | Cost | Effort | Good for |
+| Option | Cost | Card needed? | Notes |
 |---|---|---|---|
-| **A. Render** (recommended) | Paid instance + disk ([pricing](https://render.com/pricing)) | ~10 min, all in the browser | The whole team, from anywhere, over HTTPS |
-| **B. Railway** | Hobby plan, usage-based | ~10 min, all in the browser | Same as Render |
-| **C. A school computer with Docker** | Free | Needs someone comfortable with a terminal | Free hosting; controlling real printers on the school network |
+| **Free: Vercel + Turso** (start here) | $0 | No | Always on. Uploads are limited to 4 MB each, and *Compile* uses the built-in checker instead of g++ |
+| **A. Render** | Paid instance + disk | Yes | One Docker container with its own disk; g++ compile; 20 MB uploads |
+| **B. Railway** | Hobby plan, usage-based | Yes | Same as Render |
+| **C. A school computer with Docker** | Free | No | Needs a terminal; the only option that can control real printers on the school network |
 
-> **Not Vercel or Netlify.** They have no persistent disk for the database and uploads, and no `g++` for code compiles.
-
-Before you start, decide which branch to deploy. The easiest option is to merge the pull request into `main` and deploy `main`, so every later merge auto-deploys.
+**First, put the app on `main`:** merge [pull request #1](https://github.com/nabiii4/Robotics/pull/1) (the green **Merge pull request** button). Every host deploys `main`, and each later merge then updates the site automatically.
 
 ---
 
-## A. Render (recommended)
+## Free: Vercel + Turso (no credit card)
+
+Vercel runs the website and Turso stores the data. Both have free plans that don't ask for a card ([Vercel limits](https://vercel.com/docs/functions/limitations), [Turso pricing](https://turso.tech/pricing)).
+
+### 1. Make the free database (Turso, about 3 minutes)
+
+1. Go to **[turso.tech](https://turso.tech)**, click **Sign up**, and continue with **GitHub**.
+2. Click **Create Database**. Name it `fdrhs`, and pick a location in the **US East (Virginia)** area, which is closest to Vercel's default servers.
+3. Open the database and copy its **URL**. It starts with `libsql://` and ends in `.turso.io`.
+4. Click **Create Token** (also called *Generate token*). Allow read & write, choose no expiration, and copy the token. Keep it secret.
+
+### 2. Put the website online (Vercel, about 5 minutes)
+
+1. Go to **[vercel.com/signup](https://vercel.com/signup)**, choose **Hobby**, and continue with **GitHub**.
+2. Click **Add New… → Project**. Under *Import Git Repository*, find **Robotics** and click **Import**. If you don't see it, click *Adjust GitHub App Permissions* and allow the repo.
+3. Optionally, change **Project Name** to `fdrhs-robotics-hub`; that name becomes your web address. Leave everything else as it is: Vercel detects Next.js, and `vercel.json` sets the build command.
+4. Open **Environment Variables** and add:
+
+   | Name | Value |
+   |---|---|
+   | `DATABASE_URL` | the `libsql://…turso.io` URL from Turso |
+   | `DATABASE_AUTH_TOKEN` | the token from Turso |
+   | `ADMIN_INITIAL_PASSWORD` | the coach account's first password (at least 10 characters) |
+   | `TEAM_JOIN_CODE` | for example `COUGAR-2026` (students need it to sign up) |
+   | `APP_ENCRYPTION_KEY` | any long random text (protects saved printer keys) |
+
+5. Click **Deploy**. After about 3 minutes you'll see *Congratulations*. Click the preview, or copy the **Domains** address (for example `https://fdrhs-robotics-hub.vercel.app`). **That is your website.**
+6. Sign in as **`coach`** with the password you set. Then share the link and join code with the team; students sign up at **`/join`**.
+
+To turn on the GPT mentor later, open the project, go to **Settings → Environment Variables**, and add `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_DEPLOYMENT` (or just `OPENAI_API_KEY`). Then use **Deployments → ⋯ → Redeploy**. Until then, the built-in demo mentor answers.
+
+### If something goes wrong
+
+- **The build failed with "No database configured":** `DATABASE_URL` is missing or blank. Add it, then redeploy.
+- **The build failed with an authentication error:** the Turso token was copied wrong or expired. Create a new token, update `DATABASE_AUTH_TOKEN`, then redeploy.
+- **"That file is too big for this server":** the free plan accepts uploads up to 4 MB each. Split large PDFs, or link to them under Resources instead.
+- **Backups:** use **Settings → Data → Export JSON**. Turso also keeps 1 day of point-in-time restore. (*Download backup* only works with a local SQLite file.)
+
+---
+
+## A. Render (paid)
 
 **One click:** [Deploy to Render](https://render.com/deploy?repo=https://github.com/nabiii4/Robotics). This deploys the default branch (`main`). To deploy a different branch, add `/tree/<branch>` to the end of the `repo=` value. The button opens the same Blueprint form as step 2 below.
 

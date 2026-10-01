@@ -3,12 +3,18 @@ import { loadEnvConfig } from '@next/env';
 loadEnvConfig(process.cwd());
 
 async function main() {
+  const { env } = await import('../lib/env');
+  if (process.env.VERCEL && env().DATABASE_URL.startsWith('file:')) {
+    console.error('\n✖ No database configured. Vercel has no disk, so this app needs a free Turso database.\n  Add DATABASE_URL (libsql://…turso.io) and DATABASE_AUTH_TOKEN in Vercel → Settings → Environment Variables, then redeploy.\n  Step-by-step: DEPLOY.md → "Free: Vercel + Turso".\n');
+    process.exit(1);
+  }
   const { runMigrations } = await import('./migrate');
   await runMigrations();
   const { getDb, schema } = await import('../lib/db/client');
   const existing = await getDb().select().from(schema.users).limit(1);
   if (existing.length) return;
-  const want = (process.env.SEED_SCENARIO || 'B').toUpperCase();
+  // hosted deployments start clean (just the admin); local dev gets the demo team
+  const want = (process.env.SEED_SCENARIO || (process.env.VERCEL ? 'clean' : 'B')).toUpperCase();
   if (want === 'CLEAN') {
     const { seedClean } = await import('../lib/seed/clean');
     console.log('First run: creating the team and the admin account…');

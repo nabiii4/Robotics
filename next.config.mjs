@@ -17,6 +17,8 @@ const csp = [
 const nextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['manifold-3d', '@libsql/client', 'libsql', 'unpdf'],
+  // make sure serverless bundles (Vercel) ship manifold's WebAssembly next to its JS
+  outputFileTracingIncludes: { '/api/**/*': ['./node_modules/manifold-3d/*.wasm'] },
   eslint: { ignoreDuringBuilds: true },
   async headers() {
     const h = [

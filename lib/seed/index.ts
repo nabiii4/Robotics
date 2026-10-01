@@ -12,6 +12,7 @@ import { createVersion } from '../services/builds';
 import { SEED_FILES } from '../vexcode/generate';
 import { scenarioInventory } from './inventory';
 import { sha256 } from '../crypto';
+import { writeUploadBytes } from '../services/uploads';
 
 const MIN = 60_000, HOUR = 3_600_000, DAY = 86_400_000;
 const AV = { blue: '#1B67C6', red: '#C11A0E', green: '#1C9E4B', purple: '#643DBC', orange: '#EA8111', teal: '#0E7490', pink: '#C2185B', admin: '#171D22' };
@@ -110,11 +111,9 @@ export async function seed(scenario: 'A' | 'B', log: (s: string) => void = conso
   }
   // Maya's STL upload (a simple printable bracket)
   const uploadId = newId();
-  const upDir = path.resolve(e.UPLOAD_DIR);
-  fs.mkdirSync(upDir, { recursive: true });
   const stl = simpleStl();
-  const key = `${uploadId}.stl`;
-  fs.writeFileSync(path.join(upDir, key), stl);
+  const key = `db:${uploadId}.stl`;
+  await writeUploadBytes(uploadId, stl);
   await db.insert(schema.uploads).values({ id: uploadId, ownerId: ids.maya, filename: 'intake_v3.stl', mime: 'model/stl', size: stl.length, sha256: sha256(stl), kind: 'stl', storageKey: key, createdAt: at(2 * MIN) });
 
   // printers

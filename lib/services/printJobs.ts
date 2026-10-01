@@ -1,13 +1,11 @@
 import 'server-only';
-import fs from 'node:fs';
-import path from 'node:path';
 import { desc, eq } from 'drizzle-orm';
 import { db, schema } from '../db/client';
 import { newId } from '../ids';
-import { env } from '../env';
 import { partMesh, parseStl, meshStats } from '../printing/geometry';
 import { estimatePrint, tickPrinters } from './printing';
 import { logActivity } from './activity';
+import { readUploadBytes } from './uploads';
 import { bad } from '../api';
 
 export async function meshForJobSource(src: { customPartId?: string | null; uploadId?: string | null }) {
@@ -25,7 +23,7 @@ export async function meshForJobSource(src: { customPartId?: string | null; uplo
 export async function uploadMesh(uploadId: string) {
   const up = await db.query.uploads.findFirst({ where: eq(schema.uploads.id, uploadId) });
   if (!up || up.kind !== 'stl') throw bad('That upload is not an STL file.');
-  const buf = fs.readFileSync(path.join(path.resolve(env().UPLOAD_DIR), up.storageKey));
+  const buf = await readUploadBytes(up);
   const mesh = parseStl(buf);
   const st = meshStats(mesh);
   return { positions: mesh.positions, indices: mesh.indices, volumeMm3: st.volumeMm3, areaMm2: st.areaMm2, bbox: st.bbox as { min: number[]; max: number[] }, filename: up.filename };
@@ -83,7 +81,7 @@ export async function sourceFile(src: { customPartId?: string | null; uploadId?:
   if (src.uploadId && !src.customPartId) {
     const up = await db.query.uploads.findFirst({ where: eq(schema.uploads.id, src.uploadId) });
     if (!up) throw bad('That file no longer exists.');
-    return { buf: fs.readFileSync(path.join(path.resolve(env().UPLOAD_DIR), up.storageKey)), filename: up.filename, mime: up.mime };
+    return { buf: await readUploadBytes(up), filename: up.filename, mime: up.mime };
   }
   const mesh = await meshForJobSource(src);
   const { toStl } = await import('../printing/geometry');

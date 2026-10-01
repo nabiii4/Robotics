@@ -1,18 +1,16 @@
 import 'server-only';
-import fs from 'node:fs';
-import path from 'node:path';
 import { eq, inArray } from 'drizzle-orm';
 import { db, schema } from '../db/client';
 import { newId } from '../ids';
-import { env } from '../env';
 import { cosine, embed } from './client';
+import { readUploadBytes } from '../services/uploads';
 
 const RULE_RE = /<([A-Z]{1,4}\d{1,2}[a-z]?)>/g;
 
 export async function extractText(uploadId: string): Promise<{ page: number; text: string }[]> {
   const up = await db.query.uploads.findFirst({ where: eq(schema.uploads.id, uploadId) });
   if (!up) return [];
-  const buf = fs.readFileSync(path.join(path.resolve(env().UPLOAD_DIR), up.storageKey));
+  const buf = await readUploadBytes(up);
   if (up.kind === 'pdf') {
     const { extractText: ex, getDocumentProxy } = await import('unpdf');
     const pdf = await getDocumentProxy(new Uint8Array(buf));
