@@ -93,7 +93,7 @@ body[data-layout='a'] { background: var(--color-page-a); }
 .card { background: #fff; border: 1px solid var(--color-line); box-shadow: var(--shadow-card); }
 
 /* buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: 6px; font-weight: 600; transition: background-color .15s ease-out, color .15s ease-out, border-color .15s ease-out, transform .1s; white-space: nowrap; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: 0 14px; border-radius: 6px; font-weight: 600; transition: background-color .15s ease-out, color .15s ease-out, border-color .15s ease-out, transform .1s; white-space: nowrap; cursor: pointer; }
 .btn:active:not(:disabled) { transform: scale(.98); }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn-primary { background: var(--color-fdr-red); color: #fff; }

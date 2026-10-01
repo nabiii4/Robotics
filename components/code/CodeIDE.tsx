@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import Editor, { type OnMount } from '@monaco-editor/react';
+import Editor, { loader, type OnMount } from '@monaco-editor/react';
 import { ArrowsClockwise, CheckCircle, ClockCounterClockwise, Copy, DotsThreeVertical, DownloadSimple, FileCode, Gear, Play, Plus, Sparkle, Warning, XCircle, Info, CircleNotch } from '@phosphor-icons/react';
 import { api, ClientError, download } from '@/lib/client/api';
 import { useMentor } from '@/lib/client/stores';
@@ -87,7 +87,13 @@ export function CodeIDE({ buildId, embedded = false }: { buildId: string; embedd
     if (line) setJump({ line, n: Date.now() });
   }, [files, active, sp]);
   useEffect(() => { if (q.data?.lastCompile && diags === null) { setDiags(q.data.lastCompile.diagnostics.map((d) => ({ ...d, fileId: files.find((f) => f.path === d.file)?.id }))); setEngine(q.data.lastCompile.engine); } }, [q.data, diags, files]);
-  useEffect(() => { const t = setTimeout(() => { if (!monacoReady) setMonacoFailed(true); }, 9000); return () => clearTimeout(t); }, [monacoReady]);
+  // Monaco loads from a CDN; if that's blocked (some school networks), fall back to the built-in editor
+  useEffect(() => {
+    let live = true;
+    loader.init().catch(() => { if (live) setMonacoFailed(true); });
+    const t = setTimeout(() => { if (live && !monacoReady) setMonacoFailed(true); }, 9000);
+    return () => { live = false; clearTimeout(t); };
+  }, [monacoReady]);
 
   const file = files.find((f) => f.id === active);
   const content = file ? drafts[file.id] ?? file.content : '';

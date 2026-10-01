@@ -8,7 +8,7 @@ export function buildElectronics(g: Gen, f: Frame) {
   // battery
   const batBottom = Math.max(f.webBottom, 0.75);
   let batPos: Vec3 = [0, batBottom + 0.59, -0.5];
-  let batRot: Vec3 = [0, 0, 0];
+  const batRot: Vec3 = [0, 0, 0];
   if (e.batteryMount === 'rear-low') batPos = [0, batBottom + 0.59, f.zR + 4];
   if (e.batteryMount === 'side-low') { batPos = [-(f.innerX - 1.3), batBottom + 0.59, 0]; }
   g.plate(sub, 'battery-plate', 'plate-5xN-al', [batPos[0], batBottom - 0.035, batPos[2]], [0, 0, 0], 2.5, 7.5, { step: STEP.electronics, label: 'Battery plate' });

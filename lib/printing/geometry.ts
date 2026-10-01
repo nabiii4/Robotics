@@ -94,7 +94,7 @@ function build(W: any, id: string, p: Record<string, ParamValue>): M {
     case 'gusset-bracket': {
       const A = n('legAHoles') * PITCH, B = n('legBHoles') * PITCH, T = n('thicknessMm'), ang = n('angleDeg');
       const Wd = PITCH;
-      let legA = W.Manifold.cube([A, Wd, T]).subtract(union(W, holeGrid(W, n('legAHoles'), 1, T)));
+      const legA = W.Manifold.cube([A, Wd, T]).subtract(union(W, holeGrid(W, n('legAHoles'), 1, T)));
       let legB = W.Manifold.cube([B, Wd, T]).subtract(union(W, holeGrid(W, n('legBHoles'), 1, T)));
       legB = legB.rotate([0, -ang, 0]);
       const a = (ang * Math.PI) / 180;

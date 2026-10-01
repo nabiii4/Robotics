@@ -319,7 +319,7 @@ export function MentorChat({ threadId, onThread, buildId, initial, chips = QUICK
         {messages.length === 0 && !q.isLoading && (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <img src="/brand/mentor-b.png" alt="" className="h-20 w-20" />
-            <p className="max-w-[300px] text-[13.5px] text-ink-600">Hi {firstName}! I'm your FDR Robotics AI mentor. Ask me about your design, code, parts, or competition rules!</p>
+            <p className="max-w-[300px] text-[13.5px] text-ink-600">Hi {firstName}! I&apos;m your FDR Robotics AI mentor. Ask me about your design, code, parts, or competition rules!</p>
             {aiMode.demo && <p className="max-w-[320px] rounded-md bg-[#FFF6D6] px-3 py-1.5 text-[11.5px] text-[#8A6400]">Demo mentor: it understands common design requests. Add an Azure or OpenAI key in .env for full answers.</p>}
           </div>
         )}

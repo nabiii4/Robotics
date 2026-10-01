@@ -56,7 +56,7 @@ function SidebarFull({ pathname, onNavigate }: { pathname: string; onNavigate?: 
       <div className="mt-auto px-[30px] pb-[38px]">
         <p className="text-[16px] italic leading-6 text-[#B1B5BB]">“Same Cougars.<br />A Brighter Tomorrow.”</p>
         <div className="mt-[21px] h-[2px] w-[28px] bg-fdr-red" />
-        <div className="mt-[36px] text-[12px] font-semibold leading-[18px] tracking-[.3em] text-[#D9DCE0]">FDRHS<br />ROBOTICS <span className="text-fdr-red">///</span></div>
+        <div className="mt-[36px] text-[12px] font-semibold leading-[18px] tracking-[.3em] text-[#D9DCE0]">FDRHS<br />ROBOTICS <span className="text-fdr-red">{"///"}</span></div>
       </div>
     </div>
   );

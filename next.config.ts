@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-// Monaco's loader fetches the editor from cdn.jsdelivr.net (documented exception, see docs/DECISIONS.md).
+// Monaco's loader fetches the editor from cdn.jsdelivr.net; if that host is blocked the IDE falls back to a plain editor.
 const csp = [
   "default-src 'self'",
   "img-src 'self' data: blob:",
@@ -11,7 +11,7 @@ const csp = [
   "font-src 'self' data: https://cdn.jsdelivr.net",
   "worker-src 'self' blob:",
   "connect-src 'self' https://cdn.jsdelivr.net",
-  "frame-ancestors 'none'",
+  "frame-ancestors 'self'", // PDFs and text files preview in same-origin iframes
 ].join('; ');
 
 const nextConfig: NextConfig = {
