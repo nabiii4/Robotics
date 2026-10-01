@@ -24,6 +24,8 @@ Before you start, decide which branch to deploy. The easiest option is to merge 
 
 ## A. Render (recommended)
 
+**One click:** [Deploy to Render](https://render.com/deploy?repo=https://github.com/nabiii4/Robotics). This deploys the default branch (`main`). To deploy a different branch, add `/tree/<branch>` to the end of the `repo=` value. The button opens the same Blueprint form as step 2 below.
+
 1. Go to [render.com](https://render.com) and sign up with your GitHub account. Allow access to the `Robotics` repository.
 2. Click **New → Blueprint** and pick the `nabiii4/Robotics` repo and your branch. Render reads `render.yaml` and sets up the following for you:
    - a web service built from the `Dockerfile`, with health checks on `/api/health`;

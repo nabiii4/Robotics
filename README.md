@@ -30,7 +30,9 @@ On the first run, the seed writes **`data/seed-credentials.txt`**. It contains:
 
 New students sign up at `/join` with the join code.
 
-**To put it online for the team, see [DEPLOY.md](DEPLOY.md)**. It covers Render or Railway (about 10 minutes in the browser) and a free option on a school computer with Docker.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/nabiii4/Robotics)
+
+**To put it online for the team, click the button above, or see [DEPLOY.md](DEPLOY.md)**. It covers Render or Railway (about 10 minutes in the browser) and a free option on a school computer with Docker.
 
 To run in production yourself:
 
