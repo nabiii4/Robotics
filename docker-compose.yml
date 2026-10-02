@@ -1,0 +1,19 @@
+# Run on any computer with Docker (e.g. a school PC or a small VPS):
+#   docker compose up -d --build      → http://localhost:3000
+# Settings come from .env (copy .env.example). Data lives in the hub-data volume.
+services:
+  hub:
+    build: .
+    image: fdrhs-robotics-hub
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      SEED_SCENARIO: ${SEED_SCENARIO:-clean}
+    volumes:
+      - hub-data:/app/data
+volumes:
+  hub-data:
