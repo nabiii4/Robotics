@@ -4,10 +4,11 @@ import { currentUser } from '@/lib/auth/session';
 import { publicUser } from '@/lib/api';
 import { aiMode } from '@/lib/ai/config';
 import { AppShell, type Me } from '@/components/shell/AppShell';
-
-export const dynamic = 'force-dynamic';
+import { LocalAppShell } from '@/components/shell/LocalAppShell';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  // GitHub Pages build: static pages, the session lives in the browser (see browser-server/)
+  if (process.env.NEXT_PUBLIC_LOCAL_MODE === '1') return <LocalAppShell>{children}</LocalAppShell>;
   const user = await currentUser();
   if (!user) redirect('/login');
   const path = (await headers()).get('x-pathname') ?? '';

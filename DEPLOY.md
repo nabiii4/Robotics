@@ -10,12 +10,37 @@ It creates no fake students or sample data. (Set `SEED_SCENARIO=B` if you want t
 
 | Option | Cost | Card needed? | Notes |
 |---|---|---|---|
-| **Free: Vercel + Turso** (start here) | $0 | No | Always on. Uploads are limited to 4 MB each, and *Compile* uses the built-in checker instead of g++ |
+| **GitHub Pages** (quickest) | $0 | No | One setting in this repo. Runs in each visitor's browser: everyone gets their own copy of the data, and the AI mentor is the built-in demo |
+| **Free: Vercel + Turso** (shared team site) | $0 | No | Always on. Uploads are limited to 4 MB each, and *Compile* uses the built-in checker instead of g++ |
 | **A. Render** | Paid instance + disk | Yes | One Docker container with its own disk; g++ compile; 20 MB uploads |
 | **B. Railway** | Hobby plan, usage-based | Yes | Same as Render |
 | **C. A school computer with Docker** | Free | No | Needs a terminal; the only option that can control real printers on the school network |
 
-**First, put the app on `main`:** merge [pull request #1](https://github.com/nabiii4/Robotics/pull/1) (the green **Merge pull request** button). Every host deploys `main`, and each later merge then updates the site automatically.
+**First, put the app on `main`:** merge [pull request #1](https://github.com/nabiii4/Robotics/pull/1) (the green **Merge pull request** button). Every host deploys `main`, and each later merge then updates the site automatically. (GitHub Pages can also use the pull request's branch directly; see below.)
+
+---
+
+## GitHub Pages (free, runs in the browser)
+
+The site is already built into the `docs/` folder. Switch it on once:
+
+1. Open the repo on GitHub and go to **Settings → Pages**.
+2. Under **Build and deployment**, set:
+   - **Source:** *Deploy from a branch*
+   - **Branch:** `claude/new-session-jj66go`, with the folder set to **`/docs`**. After pull request #1 is merged, pick `main` instead.
+3. Click **Save**. After about a minute, the site is live at **<https://nabiii4.github.io/Robotics/>**. The Pages screen shows the link too.
+
+Anyone can open the link; there's no sign-up. The first visit signs in automatically as the coach (`coach` / `cougars-hub`) and loads the demo team, so every page has something in it.
+
+**How it works.** GitHub Pages can only serve files. So a small background script (a *service worker*, in `browser-server/`) runs the app's own server code inside the browser, with an SQLite database saved in the browser's storage. Everything works as on a hosted copy, with three differences:
+
+- **Each browser has its own copy.** Changes aren't shared with teammates, and clearing the browser's site data erases them. To back up your copy or move it to another computer, use **Settings → Data → Export JSON / Import JSON**. **Settings → Data → Reset this browser** starts over.
+- **The AI mentor is the built-in demo.** A public static site can't keep an API key secret. It still makes real design changes ("make it faster", "add a clamp"), writes code and quotes uploaded PDFs.
+- **Compile** uses the built-in syntax and VEX-rules checker, not g++. Printers are simulated.
+
+For one shared team site with real accounts and GPT, use the free Vercel + Turso option next.
+
+**Updating the Pages site after code changes:** run `npm run build:pages`, then commit and push the `docs/` folder.
 
 ---
 

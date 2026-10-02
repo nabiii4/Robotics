@@ -49,9 +49,9 @@ export default function CompetitionsPage() {
       {q.isLoading ? <Skeleton className="h-40 rounded-[10px]" /> : (
         <>
           <h2 className="mb-2 text-[14px] font-bold text-ink-900">Upcoming</h2>
-          {upcoming.length ? <div className="mb-8 grid gap-3 md:grid-cols-2">{upcoming.map((c) => <Card key={c.id} c={c} />)}</div> : <div className="card mb-8 rounded-[10px] py-6"><EmptyState icon={<Trophy size={32} />} text="No upcoming events. Add the next tournament from RobotEvents." /></div>}
+          {upcoming.length ? <div className="mb-8 grid grid-cols-1 gap-3 md:grid-cols-2">{upcoming.map((c) => <Card key={c.id} c={c} />)}</div> : <div className="card mb-8 rounded-[10px] py-6"><EmptyState icon={<Trophy size={32} />} text="No upcoming events. Add the next tournament from RobotEvents." /></div>}
           <h2 className="mb-2 text-[14px] font-bold text-ink-900">Past events</h2>
-          {past.length ? <div className="grid gap-3 md:grid-cols-2">{past.map((c) => <Card key={c.id} c={c} isPast />)}</div> : <p className="text-[13px] text-ink-500">No past events yet.</p>}
+          {past.length ? <div className="grid grid-cols-1 gap-3 md:grid-cols-2">{past.map((c) => <Card key={c.id} c={c} isPast />)}</div> : <p className="text-[13px] text-ink-500">No past events yet.</p>}
         </>
       )}
       <CompetitionDialog open={adding} onClose={() => setAdding(false)} />

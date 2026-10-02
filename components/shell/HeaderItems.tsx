@@ -12,6 +12,7 @@ import { Tip } from '../ui/Tip';
 import { toast } from '../ui/Toast';
 import { useMe } from './AppShell';
 import * as Popover from '@radix-ui/react-popover';
+import { BASE, LOCAL, SIGNED_OUT_KEY } from '@/lib/client/base';
 
 interface Presence { online: boolean; who: string | null }
 
@@ -115,7 +116,11 @@ export function NotificationBell({ variant }: { variant: 'a' | 'b' }) {
 export function AvatarMenu({ variant }: { variant: 'a' | 'b' }) {
   const { me, layout, savePrefs } = useMe();
   const router = useRouter();
-  const signOut = async () => { await api.post('/api/auth/logout'); location.href = '/login'; };
+  const signOut = async () => {
+    await api.post('/api/auth/logout');
+    if (LOCAL) localStorage.setItem(SIGNED_OUT_KEY, '1'); // don't sign straight back in
+    location.href = `${BASE}/login`;
+  };
   return (
     <Menu>
       <MenuTrigger asChild>

@@ -8,6 +8,7 @@ import { useMentor } from '@/lib/client/stores';
 import { Drawer } from '../ui/Dialog';
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '../ui/Menu';
 import { MentorChat } from './Chat';
+import { BASE } from '@/lib/client/base';
 
 export interface BuildListItem { id: string; name: string; ownerId: string; version: number; isTeamActive: boolean; status: string; program: string; tagline: string | null; ownerName: string; updatedAt: number; updatedBy: string; readiness: number | null; visibility: string; versionId: string | null; drawingPrefix: string }
 
@@ -31,7 +32,7 @@ export function MentorDrawer() {
   return (
     <Drawer open={open} onOpenChange={(o) => (o ? null : close())} title="AI Build Mentor">
       <div className="flex items-center gap-3 border-b border-line px-4 py-3">
-        <img src="/brand/mentor-b.png" alt="" className="h-9 w-9" />
+        <img src={`${BASE}/brand/mentor-b.png`} alt="" className="h-9 w-9" />
         <div className="min-w-0 flex-1">
           <div className="text-[15px] font-bold text-ink-900">AI Build Mentor</div>
           <Menu>

@@ -14,6 +14,7 @@ import { LazyRobotCanvas, ViewerToolbar, ViewPresets, useDerived, type Preset, t
 import { BlueprintPane, AssemblyMini, CodePane } from './BuildPanes';
 import { BrainStat, PrinterStat, QueueStat, StatusMenu, STATUS_LABEL, JobThumb, JobMenu, BlueprintThumb, CodeMini, SubsystemDot, useDashboard, type Dash } from './shared';
 import { useMe } from '../shell/AppShell';
+import { BASE } from '@/lib/client/base';
 
 type Tab = '3d' | 'blueprint' | 'assembly' | 'code';
 const TABS: [Tab, string, typeof Cube, number][] = [['3d', '3D Model', Cube, 103], ['blueprint', 'Blueprint', FileText, 103], ['assembly', 'Assembly', Wrench, 109], ['code', 'VEX Code', Code, 123]];
@@ -208,7 +209,7 @@ function WorkspaceB({ d }: { d: Dash }) {
     } catch (e) { toast.error('Check failed', (e as ClientError).message); }
   };
   return (
-    <div className="grid gap-[14px] md:grid-cols-2 xl:grid-cols-[367fr_356fr_355fr_482fr]">
+    <div className="grid grid-cols-1 gap-[14px] md:grid-cols-2 xl:grid-cols-[367fr_356fr_355fr_482fr]">
       <section aria-label="Blueprints" className="card relative rounded-[12px] xl:h-[132px]">
         {head(FileText, 'Blueprints', 'Design, view, and share CAD drawings.')}
         <div className="flex items-center gap-[14px] px-[12px] pb-[9px] pt-[7px]">
@@ -236,7 +237,7 @@ function WorkspaceB({ d }: { d: Dash }) {
       </section>
       <section aria-label="AI Build Mentor" className="card relative rounded-[12px] xl:h-[132px]">
         {head(Robot, 'AI Build Mentor', 'Get help with design, code, and troubleshooting.')}
-        <button aria-label="Open AI Build Mentor" onClick={() => openMentor()} className="absolute right-[86px] top-[15px] hidden lg:block"><img src="/brand/mentor-b.png" alt="" className="h-[67px] w-[67px]" /></button>
+        <button aria-label="Open AI Build Mentor" onClick={() => openMentor()} className="absolute right-[86px] top-[15px] hidden lg:block"><img src={`${BASE}/brand/mentor-b.png`} alt="" className="h-[67px] w-[67px]" /></button>
         <button onClick={() => openMentor()} className="absolute right-[6px] top-[10px] hidden w-[79px] rounded-[8px] border border-[#D8E1EA] bg-white px-[7px] py-[3px] text-left text-[11px] font-medium leading-[13px] text-[#1B1F24] shadow-[0_2px_6px_rgb(16_24_40/.06)] lg:block">How can I help today?<span className="absolute -left-[5px] top-[11px] h-2 w-2 rotate-45 border-b border-l border-[#D8E1EA] bg-white" /></button>
         <form onSubmit={(e) => { e.preventDefault(); if (q.trim()) { openMentor({ message: q.trim(), buildId: d.build?.id ?? null }); setQ(''); } }} className="mx-[13px] mt-[10px] flex h-[32px] max-w-[288px] items-center rounded-[6px] border border-[#D9DBDD] bg-white">
           <input aria-label="Ask the AI Build Mentor" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ask about your build..." className="h-full min-w-0 flex-1 bg-transparent px-[11px] text-[12.5px] text-ink-900 outline-none placeholder:text-ink-400" />
@@ -261,7 +262,7 @@ export function DashboardB() {
       <div className="relative xl:h-[210px]">
         <div className="pt-6 xl:absolute xl:left-[11px] xl:top-[25px] xl:pt-0">
           <p className="text-[13px] font-medium uppercase leading-[15px] tracking-[.16em] text-[#44474F]">Franklin D. Roosevelt High School</p>
-          <h1 className="font-display-b mt-[8px] whitespace-nowrap text-[40px] leading-[1.05] text-ink-950 sm:text-[56px] sm:leading-[56px] xl:text-[46px] xl:leading-[50px] 3xl:text-[56px] 3xl:leading-[56px]">Build. <span className="text-fdr-red-bright">Code.</span> Compete.</h1>
+          <h1 className="font-display-b mt-[8px] text-[36px] leading-[1.08] text-ink-950 sm:whitespace-nowrap sm:text-[56px] sm:leading-[56px] xl:text-[46px] xl:leading-[50px] 3xl:text-[56px] 3xl:leading-[56px]">Build. <span className="text-fdr-red-bright">Code.</span> Compete.</h1>
           <p className="mt-[2px] text-[17px] leading-[22px] text-ink-600 sm:text-[19px]">Your <span className="font-semibold text-ink-900">FDR Robotics</span> engineering hub.</p>
           <div className="mt-[15px] flex flex-wrap gap-[19px]">
             <button onClick={() => openNew(true)} className="btn btn-primary h-[47px] w-[244px] text-[16px] shadow-[0_1px_2px_rgb(200_6_28/.25)]"><Plus size={18} weight="bold" />Start a New Build<ArrowRight size={18} /></button>
@@ -284,7 +285,7 @@ export function DashboardB() {
         </div>
       </div>
       {/* main row */}
-      <div className="mt-6 grid gap-[13.5px] xl:mt-0 xl:grid-cols-[864fr_355fr_363fr]">
+      <div className="mt-6 grid grid-cols-1 gap-[13.5px] xl:mt-0 xl:grid-cols-[864fr_355fr_363fr]">
         {isLoading || !d ? <Skeleton className="h-[480px] rounded-[12px]" /> : d.build ? <ActiveBuildB d={d} /> : <section className="card flex h-[480px] items-center justify-center rounded-[12px]"><EmptyState icon={<Cube size={40} />} text="No active build yet" action={<button className="btn btn-primary h-10 px-4" onClick={() => openNew(true)}><Plus size={16} />Start a New Build</button>} /></section>}
         {d ? <QueueB d={d} refresh={() => refetch()} /> : <Skeleton className="h-[480px] rounded-[12px]" />}
         <div className="flex flex-col gap-[13px]">

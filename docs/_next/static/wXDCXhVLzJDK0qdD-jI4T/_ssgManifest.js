@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fbuilds\u002F[id]","\u002Fcompetitions\u002F[id]","\u002Fsettings\u002F[[...tab]]","\u002Fuploads\u002F[id]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

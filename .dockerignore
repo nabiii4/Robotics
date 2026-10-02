@@ -8,3 +8,6 @@ data
 *.log
 tests
 coverage
+docs
+out
+.pages-build

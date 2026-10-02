@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { api, ClientError } from '@/lib/client/api';
 import { strength } from '@/lib/strength';
 import { Spinner } from '@/components/ui/bits';
+import { BASE } from '@/lib/client/base';
 
 const ROLES = ['Builder', 'Programmer', 'Driver', 'Designer', 'Notebook', 'Captain'];
 export function JoinForm() {
@@ -15,7 +16,7 @@ export function JoinForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true); setErr(null);
-    try { await api.post('/api/auth/join', { ...f, grade: f.grade || null }); location.href = '/'; }
+    try { await api.post('/api/auth/join', { ...f, grade: f.grade || null }); location.href = `${BASE}/`; }
     catch (e2) { setErr((e2 as ClientError).message); setBusy(false); }
   }
   return (

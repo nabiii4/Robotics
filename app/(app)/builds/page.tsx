@@ -13,6 +13,7 @@ import { BuildMenu, PROGRAM, STATUS_TONE } from '@/components/builds/BuildMenu';
 import { Badge, EmptyState, Page, PageHeader, Progress, Segmented, Skeleton } from '@/components/ui/bits';
 import { toast } from '@/components/ui/Toast';
 import { STATUS_LABEL } from '@/components/dashboard/shared';
+import { BASE } from '@/lib/client/base';
 
 function BuildsInner() {
   const { me } = useMe();
@@ -55,26 +56,26 @@ function BuildsInner() {
         </label>
       </div>
       {q.isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[300px] rounded-[10px]" />)}</div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[300px] rounded-[10px]" />)}</div>
       ) : !list.length ? (
         <div className="card rounded-[10px] py-12"><EmptyState icon={<Cube size={44} />} text={q.data?.builds.length ? 'No builds match these filters.' : 'No builds yet — start one and the mentor can design it for you.'} action={<button className="btn btn-primary h-10 px-4" onClick={() => setNew(true)}><Plus size={16} />Start a New Build</button>} /></div>
       ) : view === 'blueprints' ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {list.map((b) => (
             <Link key={b.id} href={`/builds/${b.id}?tab=blueprint`} className="card group overflow-hidden rounded-[10px] hover:shadow-[0_10px_28px_rgb(16_24_40/.14)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {b.versionId ? <img src={`/api/builds/${b.id}/thumb.svg?style=a&v=${b.versionId}`} alt={`${b.name} blueprint`} className="aspect-[16/10] w-full bg-blueprint-blue object-cover" /> : <div className="aspect-[16/10] bg-blueprint-blue" />}
+              {b.versionId ? <img src={`${BASE}/api/builds/${b.id}/thumb.svg?style=a&v=${b.versionId}`} alt={`${b.name} blueprint`} className="aspect-[16/10] w-full bg-blueprint-blue object-cover" /> : <div className="aspect-[16/10] bg-blueprint-blue" />}
               <div className="px-4 py-3"><div className="font-mono text-[12px] text-ink-500">{b.drawingPrefix}_v{b.version}</div><div className="text-[15px] font-bold text-ink-900 group-hover:text-fdr-red">{b.name}</div></div>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {list.map((b) => (
             <article key={b.id} className="card group relative flex flex-col overflow-hidden rounded-[10px] transition-shadow hover:shadow-[0_10px_28px_rgb(16_24_40/.14)]">
               <Link href={`/builds/${b.id}`} className="block" aria-label={`Open ${b.name}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {b.versionId ? <img src={`/api/builds/${b.id}/thumb.svg?style=a&v=${b.versionId}`} alt="" className="aspect-[16/9] w-full bg-blueprint-blue object-cover" /> : <div className="aspect-[16/9] bg-blueprint-navy" />}
+                {b.versionId ? <img src={`${BASE}/api/builds/${b.id}/thumb.svg?style=a&v=${b.versionId}`} alt="" className="aspect-[16/9] w-full bg-blueprint-blue object-cover" /> : <div className="aspect-[16/9] bg-blueprint-navy" />}
               </Link>
               {b.isTeamActive && <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11.5px] font-bold text-fdr-red shadow"><Star size={13} weight="fill" />Active Build</span>}
               <div className="flex flex-1 flex-col gap-2 px-4 pb-4 pt-3">

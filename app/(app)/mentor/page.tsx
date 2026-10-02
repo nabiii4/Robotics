@@ -10,6 +10,7 @@ import { MentorChat } from '@/components/mentor/Chat';
 import { useBuilds, useThreads } from '@/components/mentor/MentorDrawer';
 import { MemoryPanel } from '@/components/mentor/MemoryPanel';
 import { toast } from '@/components/ui/Toast';
+import { BASE } from '@/lib/client/base';
 
 function MentorInner() {
   const sp = useSearchParams();
@@ -64,7 +65,7 @@ function MentorInner() {
       </aside>
       <main className="flex min-w-0 flex-1 flex-col">
         <div className="flex flex-wrap items-center gap-3 border-b border-line px-4 py-2.5">
-          <img src="/brand/mentor-b.png" alt="" className="h-9 w-9" />
+          <img src={`${BASE}/brand/mentor-b.png`} alt="" className="h-9 w-9" />
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-[15px] font-bold text-ink-900">{current?.title ?? 'New conversation'}</h1>
             <div className="text-[11.5px] text-ink-500">{aiMode.demo ? 'Demo mentor (no AI key set)' : 'AI Build Mentor'}</div>

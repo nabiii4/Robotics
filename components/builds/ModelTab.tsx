@@ -49,7 +49,7 @@ export function ModelTab({ d }: { d: Derived }) {
   const full = () => { const el = wrap.current; if (!el) return; if (document.fullscreenElement) document.exitFullscreen(); else el.requestFullscreen?.(); };
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[1fr_280px]">
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_280px]">
       <div ref={wrap} className="viewer-bg relative h-[calc(100vh-260px)] min-h-[480px] overflow-hidden rounded-[10px]">
         <LazyRobotCanvas className="absolute inset-0" apiRef={apiRef} parts={posed} bbox={d.bbox} explode={explode / 100} showHardware={hardware} hidden={hidden} highlight={hover}
           sizingBox={sizing ? size[0] : null} accent={d.spec.appearance.accentColor} metal={d.spec.appearance.metal} quality={me.prefs.quality} reduceMotion={me.prefs.reduceMotion} brainLabel={d.build.name}

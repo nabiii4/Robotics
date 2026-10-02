@@ -12,7 +12,7 @@ const graduate = Graduate({ subsets: ['latin'], weight: '400', variable: '--font
 export const metadata: Metadata = {
   title: 'FDRHS Robotics Hub',
   description: 'The FDR Cougars robotics engineering hub — AI Build Mentor, 3D robot design, printing, parts and VEX Code.',
-  icons: { icon: '/brand/favicon.svg' },
+  icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/brand/favicon.svg` },
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#C8061C' };
 

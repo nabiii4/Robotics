@@ -60,7 +60,7 @@ export async function seed(scenario: 'A' | 'B', log: (s: string) => void = conso
     ids[p.key] = id;
     await db.insert(schema.users).values({
       id, username: p.username, displayName: p.display, avatarText: p.avatarText ?? null, avatarColor: p.color, role: p.role, teamRole: p.teamRole,
-      passwordHash: await hashPassword(password, 10), mustChangePassword: p.key === 'admin', prefs: { layout: scenario === 'A' ? 'a' : 'b', memoryEnabled: true, replyLength: 'concise', quality: 'medium' },
+      passwordHash: await hashPassword(password, 10), mustChangePassword: p.key === 'admin' && !e.ADMIN_INITIAL_PASSWORD, prefs: { layout: scenario === 'A' ? 'a' : 'b', memoryEnabled: true, replyLength: 'concise', quality: 'medium' },
       skills: p.skills ?? [], createdAt: at(30 * DAY), lastActiveAt: at(Math.floor(Math.random() * 3) * HOUR),
     });
     creds.push(`${p.display.padEnd(12)} username: ${p.username.padEnd(10)} password: ${password}${p.key === 'admin' ? '   (must change on first sign-in)' : ''}`);

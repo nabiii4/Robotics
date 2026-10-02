@@ -11,6 +11,7 @@ import { Dialog } from '../ui/Dialog';
 import { Switch } from '../ui/Switch';
 import { toast } from '../ui/Toast';
 import { COLORS, MATERIALS, fmtDuration } from '../printer/SendToPrinterDialog';
+import { BASE } from '@/lib/client/base';
 
 const MeshViewer = dynamic(() => import('../viewer3d/MeshViewer'), { ssr: false, loading: () => <div className="flex h-full items-center justify-center bg-[#F4F6F8] text-[12px] text-ink-400">Loading preview…</div> });
 
@@ -96,7 +97,7 @@ function ParamEditor({ part, onSaved, readOnly }: { part: PartView; onSaved: () 
     catch (e) { toast.error('Could not save', (e as ClientError).message); } finally { setSaving(false); }
   };
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
       <div className="grid content-start gap-3">
         <div className="relative h-[360px] overflow-hidden rounded-[10px] border border-line">
           {mesh ? <MeshViewer positions={mesh.positions} indices={mesh.indices} color={meta.color} className="h-full w-full" /> : <div className="flex h-full items-center justify-center bg-[#F4F6F8]"><Spinner /></div>}
@@ -160,14 +161,14 @@ export function PartsTab({ buildId, readOnly }: { buildId: string; readOnly: boo
   return (
     <div className="grid gap-4">
       <div className="flex gap-2 rounded-[8px] border border-[#BFD6F6] bg-[#EEF5FF] px-4 py-3 text-[13px] text-[#1C4A85]"><Info size={18} className="mt-px shrink-0" />{BANNER}</div>
-      <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
         <aside className="grid h-fit gap-2">
           {!readOnly && <button className="btn btn-primary h-10" onClick={() => setAdding(true)}><Plus size={16} />New printed part</button>}
           {q.isLoading ? <Spinner /> : !parts.length ? <div className="card rounded-[10px] py-6"><EmptyState icon={<Printer size={32} />} text="No printed parts yet." /></div> : parts.map((p) => (
             <div key={p.id} className={`card flex items-center gap-3 rounded-[10px] p-2 ${part?.id === p.id ? 'ring-2 ring-fdr-red' : ''}`}>
               <button onClick={() => setSel(p.id)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/api/parts/${p.id}/thumb.png?v=${p.updatedAt}`} alt="" className="h-12 w-16 shrink-0 rounded-md bg-[#F4F6F8] object-contain" />
+                <img src={`${BASE}/api/parts/${p.id}/thumb.png?v=${p.updatedAt}`} alt="" className="h-12 w-16 shrink-0 rounded-md bg-[#F4F6F8] object-contain" />
                 <span className="min-w-0"><span className="block truncate text-[13px] font-semibold text-ink-900">{p.name}</span><span className="block truncate text-[11.5px] text-ink-500">{p.templateName} · {p.material}</span><Badge tone={p.legalityBadge.tone} className="mt-1">{p.legalityBadge.label}</Badge></span>
               </button>
               {!readOnly && (

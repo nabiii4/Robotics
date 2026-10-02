@@ -21,6 +21,7 @@ import { SpecsTab } from './SpecsTab';
 import { PartsTab } from './PartsTab';
 import { RulesTab } from './RulesTab';
 import { CodeIDE } from '../code/CodeIDE';
+import { BASE } from '@/lib/client/base';
 
 export interface VersionRow { id: string; version: number; source: string; author: string; diff: string[] | null; changeSummary: string[] | null; createdAt: number }
 export interface BuildDetail { build: { id: string; name: string; tagline: string | null; status: string; visibility: string; ownerId: string; isTeamActive: boolean; currentVersionId: string | null; program: string; drawingPrefix: string }; versions: VersionRow[] }
@@ -172,7 +173,7 @@ export function Workspace({ id }: { id: string }) {
       {panel && (
         <aside className="sticky top-[62px] hidden h-[calc(100vh-62px)] w-[400px] shrink-0 flex-col border-l border-line bg-white lg:flex" aria-label="AI Build Mentor">
           <div className="flex items-center gap-2 border-b border-line px-4 py-3">
-            <img src="/brand/mentor-b.png" alt="" className="h-8 w-8" />
+            <img src={`${BASE}/brand/mentor-b.png`} alt="" className="h-8 w-8" />
             <div className="min-w-0 flex-1"><div className="text-[14px] font-bold text-ink-900">AI Build Mentor</div><div className="truncate text-[11.5px] text-ink-500">Designing: {b?.name} v{cur?.version}</div></div>
             <button aria-label="New conversation" onClick={() => { setThread(null); setInitial(null); setMentorKey((k) => k + 1); }} className="rounded-md px-2 py-1 text-[12px] font-semibold text-ink-600 hover:bg-black/5">New</button>
             <button aria-label="Collapse mentor panel" onClick={() => togglePanel(false)} className="rounded-md p-1.5 text-ink-500 hover:bg-black/5 hover:text-ink-900"><X size={17} /></button>

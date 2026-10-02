@@ -10,6 +10,7 @@ import { Badge, EmptyState, Field, Page, PageHeader, Skeleton, Spinner } from '@
 import { Dialog } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import { toast } from '@/components/ui/Toast';
+import { BASE } from '@/lib/client/base';
 
 interface Up { id: string; filename: string; title: string | null; category: string | null; kind: string; mime: string; size: number; useForAi: boolean; chunks: number; ownerId: string; ownerName: string; createdAt: number }
 const DOC_CATS = ['Game Manual', 'Rules Q&A', 'Notebook', 'Design', 'Programming', 'Strategy', 'Photos', 'Other'];
@@ -71,7 +72,7 @@ export default function ResourcesPage() {
       <section className="mb-8">
         <div className="mb-2 flex items-center justify-between"><h2 className="text-[14px] font-bold text-ink-900">Official links</h2>{captain && links.data && <button className="btn btn-ghost h-8 text-[12.5px]" onClick={() => setEditLinks(true)}><PencilSimple size={14} />Edit</button>}</div>
         {links.isLoading ? <Skeleton className="h-28 rounded-[10px]" /> : (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {links.data?.links.map((l) => (
               <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="card group flex gap-3 rounded-[10px] p-4 hover:shadow-[0_6px_18px_rgb(16_24_40/.1)]">
                 <BookOpen size={22} className="mt-0.5 shrink-0 text-fdr-red" />
@@ -116,9 +117,9 @@ export default function ResourcesPage() {
       </Dialog>
       {preview && (
         <Dialog open onOpenChange={(o) => !o && setPreview(null)} title={preview.title ?? preview.filename} width={980} footer={<><button className="btn btn-outline" onClick={() => download(`/api/uploads/${preview.id}/file`)}><DownloadSimple size={15} />Download</button><Link href={`/uploads/${preview.id}`} className="btn btn-outline">Open page</Link></>}>
-          {preview.kind === 'pdf' ? <iframe title={preview.filename} src={`/api/uploads/${preview.id}/file?inline=1`} className="h-[70vh] w-full rounded border border-line" />
-            : preview.kind === 'image' ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`/api/uploads/${preview.id}/file?inline=1`} alt={preview.title ?? preview.filename} className="mx-auto max-h-[70vh] rounded" />
-            : <iframe title={preview.filename} src={`/api/uploads/${preview.id}/file?inline=1`} className="h-[60vh] w-full rounded border border-line bg-white" />}
+          {preview.kind === 'pdf' ? <iframe title={preview.filename} src={`${BASE}/api/uploads/${preview.id}/file?inline=1`} className="h-[70vh] w-full rounded border border-line" />
+            : preview.kind === 'image' ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={`${BASE}/api/uploads/${preview.id}/file?inline=1`} alt={preview.title ?? preview.filename} className="mx-auto max-h-[70vh] rounded" />
+            : <iframe title={preview.filename} src={`${BASE}/api/uploads/${preview.id}/file?inline=1`} className="h-[60vh] w-full rounded border border-line bg-white" />}
         </Dialog>
       )}
       {editLinks && links.data && <LinksEditor open onClose={() => setEditLinks(false)} links={links.data.links} />}

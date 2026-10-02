@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FDRHS Robotics Hub</title></head>
+<body style="font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;color:#3b4148">
+<p id="m">Opening FDRHS Robotics Hub…</p>
+<script>
+(function () {
+  var base = "/Robotics";
+  var home = function () { location.replace(base + '/'); };
+  var last = Number(sessionStorage.getItem('hub-404') || 0);
+  if (!('serviceWorker' in navigator) || Date.now() - last < 10000) return home();
+  sessionStorage.setItem('hub-404', String(Date.now()));
+  navigator.serviceWorker.register(base + '/sw.js', { scope: base + '/' }).then(function () { return navigator.serviceWorker.ready; }).then(function () { location.reload(); }, home);
+})();
+</script></body></html>

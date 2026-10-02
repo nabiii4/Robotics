@@ -13,9 +13,10 @@ import { Badge, Spinner } from '../ui/bits';
 import { toast } from '../ui/Toast';
 import { Dialog } from '../ui/Dialog';
 import { useMe } from '../shell/AppShell';
+import { BASE, LOCAL } from '@/lib/client/base';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface Msg { id: string; role: 'user' | 'assistant' | 'note'; content: string; createdAt: number; envelope?: any; applied?: any; pendingDone?: Record<string, any>; feedback?: number | null; flagged?: boolean; model?: string | null; target?: string | null; pending?: boolean; error?: { message: string; retryMessageId?: string } }
+export interface Msg { id: string; role: 'user' | 'assistant' | 'note'; content: string; createdAt: number; envelope?: any; applied?: any; pendingDone?: Record<string, any>; feedback?: number | null; flagged?: boolean; model?: string | null; target?: string | null; pending?: boolean; error?: { message: string; retryMessageId?: string }; replyId?: string }
 
 const STAGES = ['Reading your build…', 'Thinking…', 'Checking rules…', 'Updating 3D model…'];
 export const QUICK_CHIPS = [
@@ -260,7 +261,8 @@ export function MentorChat({ threadId, onThread, buildId, initial, chips = QUICK
   const q = useQuery({ queryKey: ['thread', threadId], queryFn: () => api.get<{ messages: Msg[] }>(`/api/ai/threads/${threadId}`), enabled: !!threadId });
   const server = q.data?.messages ?? [];
   const serverIds = new Set(server.map((m) => m.id));
-  const messages = [...server, ...local.filter((m) => !serverIds.has(m.id))];
+  // a sent message shows locally until the thread reloads with the server's copy (marked by the reply it belongs to)
+  const messages = [...server, ...local.filter((m) => !serverIds.has(m.id) && !(m.replyId && serverIds.has(m.replyId)))];
   const selfThread = useRef<string | null>(null);
   useEffect(() => { if (threadId && threadId === selfThread.current) return; setLocal([]); }, [threadId]);
   useEffect(() => { scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: 'smooth' }); }, [messages.length, busy]);
@@ -284,7 +286,7 @@ export function MentorChat({ threadId, onThread, buildId, initial, chips = QUICK
     abort.current = new AbortController();
     try {
       const r = await api.post<{ threadId: string; message: Msg; remaining: number }>('/api/ai/mentor', { threadId, buildId, message: t, chipId, codeContext: codeContext ?? (codeFileId ? { fileId: codeFileId } : null), retryMessageId }, abort.current.signal);
-      setLocal((l) => [...l.filter((x) => x.id !== tempWait.id), r.message]);
+      setLocal((l) => [...l.filter((x) => x.id !== tempWait.id).map((x) => (x.id === tempUser.id ? { ...x, replyId: r.message.id } : x)), r.message]);
       if (r.threadId !== threadId) { selfThread.current = r.threadId; onThread(r.threadId); }
       await qc.invalidateQueries({ queryKey: ['thread', r.threadId] });
       qc.invalidateQueries({ queryKey: ['threads'] });
@@ -318,9 +320,9 @@ export function MentorChat({ threadId, onThread, buildId, initial, chips = QUICK
       <div ref={scroller} className="scroll-thin min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
         {messages.length === 0 && !q.isLoading && (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
-            <img src="/brand/mentor-b.png" alt="" className="h-20 w-20" />
+            <img src={`${BASE}/brand/mentor-b.png`} alt="" className="h-20 w-20" />
             <p className="max-w-[300px] text-[13.5px] text-ink-600">Hi {firstName}! I&apos;m your FDR Robotics AI mentor. Ask me about your design, code, parts, or competition rules!</p>
-            {aiMode.demo && <p className="max-w-[320px] rounded-md bg-[#FFF6D6] px-3 py-1.5 text-[11.5px] text-[#8A6400]">Demo mentor: it understands common design requests. Add an Azure or OpenAI key in .env for full answers.</p>}
+            {aiMode.demo && <p className="max-w-[320px] rounded-md bg-[#FFF6D6] px-3 py-1.5 text-[11.5px] text-[#8A6400]">{LOCAL ? 'Demo mentor: it understands common design requests. The GitHub Pages version can’t hold AI keys; a hosted copy (see DEPLOY.md) can use GPT.' : 'Demo mentor: it understands common design requests. Add an Azure or OpenAI key in .env for full answers.'}</p>}
           </div>
         )}
         {q.isLoading && <div className="flex justify-center py-6"><Spinner /></div>}

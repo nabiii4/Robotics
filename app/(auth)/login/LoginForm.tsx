@@ -2,11 +2,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { api, ClientError } from '@/lib/client/api';
+import { BASE, LOCAL, LOCAL_COACH, SIGNED_OUT_KEY } from '@/lib/client/base';
 import { Spinner } from '@/components/ui/bits';
 
 export function LoginForm({ next }: { next?: string }) {
-  const [username, setU] = useState('');
-  const [password, setP] = useState('');
+  const [username, setU] = useState(LOCAL ? LOCAL_COACH.username : '');
+  const [password, setP] = useState(LOCAL ? LOCAL_COACH.password : '');
   const [keep, setKeep] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -16,7 +17,10 @@ export function LoginForm({ next }: { next?: string }) {
     setBusy(true); setErr(null);
     try {
       const r = await api.post<{ mustChangePassword: boolean }>('/api/auth/login', { username, password, keep });
-      location.href = r.mustChangePassword ? '/settings/security?first=1' : next && next.startsWith('/') ? next : '/';
+      if (LOCAL) localStorage.removeItem(SIGNED_OUT_KEY);
+      // the static GitHub Pages build can't read ?next= on the server, so fall back to the address bar
+      const to = next ?? new URLSearchParams(location.search).get('next');
+      location.href = r.mustChangePassword ? `${BASE}/settings/security?first=1` : to && to.startsWith('/') && !to.startsWith('//') ? to : `${BASE}/`;
     } catch (e2) {
       setErr((e2 as ClientError).message);
       setBusy(false);
@@ -26,6 +30,11 @@ export function LoginForm({ next }: { next?: string }) {
     <form onSubmit={submit} className="card rounded-[12px] p-6">
       <h2 className="text-[22px] font-bold text-ink-900">Sign in</h2>
       <p className="mb-5 mt-1 text-[13.5px] text-ink-500">Welcome back, Cougar.</p>
+      {LOCAL && (
+        <p className="mb-4 rounded-md bg-[#F3F5F7] px-3 py-2 text-[12.5px] text-ink-600">
+          This version runs entirely in your browser, and everything you do is saved on this device. The coach account is filled in for you (password <span className="font-mono">{LOCAL_COACH.password}</span>).
+        </p>
+      )}
       <label className="label" htmlFor="u">Username</label>
       <input id="u" className="input mb-3" autoComplete="username" value={username} onChange={(e) => setU(e.target.value)} required autoFocus />
       <label className="label" htmlFor="p">Password</label>

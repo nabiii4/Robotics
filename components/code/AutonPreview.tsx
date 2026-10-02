@@ -72,7 +72,7 @@ export function AutonPreview({ files, metrics, buildId, start: initialStart, aut
   const over = sim.total > autonSeconds;
 
   return (
-    <div className="grid gap-3 p-3 md:grid-cols-[auto_1fr]">
+    <div className="grid grid-cols-1 gap-3 p-3 md:grid-cols-[auto_1fr]">
       <div ref={wrap} className="w-full max-w-[560px] md:w-[420px]">
         <canvas ref={canvas} style={{ width: px, height: px }} className="cursor-grab touch-none rounded-[6px] active:cursor-grabbing" aria-label="Top-down field preview — drag the robot to set the start position"
           onPointerDown={(e) => { if (t > 0) setT(0); const f = toField(e); drag.current = { dx: f.x - start.x, dy: f.y - start.y }; (e.target as HTMLElement).setPointerCapture(e.pointerId); }}

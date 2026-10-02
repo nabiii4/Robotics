@@ -12,6 +12,7 @@ import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from '../ui/M
 import { Tip } from '../ui/Tip';
 import { toast } from '../ui/Toast';
 import { usePresence } from '../shell/HeaderItems';
+import { BASE } from '@/lib/client/base';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Dash {
@@ -106,7 +107,7 @@ export function StatusMenu({ buildId, status, children }: { buildId: string; sta
 
 export function JobThumb({ job, className, style }: { job: Pick<Job, 'id' | 'name'>; className?: string; style?: React.CSSProperties }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`/api/print/jobs/${job.id}/thumb.png`} alt="" loading="lazy" className={className} style={style} />;
+  return <img src={`${BASE}/api/print/jobs/${job.id}/thumb.png`} alt="" loading="lazy" className={className} style={style} />;
 }
 
 export function JobMenu({ job, onChange, trigger }: { job: Job; onChange: () => void; trigger?: React.ReactNode }) {

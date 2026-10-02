@@ -7,6 +7,7 @@ import { useUI } from '@/lib/client/stores';
 import { Dialog } from '../ui/Dialog';
 import { Badge, Field, Spinner } from '../ui/bits';
 import { toast } from '../ui/Toast';
+import { BASE } from '@/lib/client/base';
 
 export interface PrintSources {
   parts: { id: string; name: string; buildId: string; buildName: string; template: string; material: string; color: string; defaultQty: number; legality: { key: string; label: string; tone: 'grey' | 'blue' | 'purple' } }[];
@@ -119,7 +120,7 @@ export function SendToPrinterDialog() {
         {src === 'part' ? (
           sources.isLoading ? <div className="flex items-center gap-2 text-[13px] text-ink-500"><Spinner />Loading parts…</div> : (
             <div className="grid grid-cols-[88px_1fr] items-start gap-3">
-              {partId ? <img src={`/api/parts/${partId}/thumb.png?color=${color}`} alt="" className="h-[66px] w-[88px] rounded-[6px] bg-[#F4F6F8] object-contain" /> : <div className="h-[66px] w-[88px] rounded-[6px] bg-[#F4F6F8]" />}
+              {partId ? <img src={`${BASE}/api/parts/${partId}/thumb.png?color=${color}`} alt="" className="h-[66px] w-[88px] rounded-[6px] bg-[#F4F6F8] object-contain" /> : <div className="h-[66px] w-[88px] rounded-[6px] bg-[#F4F6F8]" />}
               <Field label="Part">
                 <select className="input" value={partId} onChange={(e) => setPartId(e.target.value)}>
                   {!sources.data?.parts.length && <option value="">No printed parts yet — add one in a build’s Printed Parts tab</option>}

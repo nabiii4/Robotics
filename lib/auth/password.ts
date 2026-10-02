@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 
-export const hashPassword = (pw: string, cost = 12) => bcrypt.hash(pw, cost);
+// BCRYPT_COST caps the work factor (the in-browser GitHub Pages version uses a lower one)
+export const hashPassword = (pw: string, cost = 12) => bcrypt.hash(pw, Math.min(cost, Number(process.env.BCRYPT_COST) || cost));
 export const verifyPassword = (pw: string, hash: string) => bcrypt.compare(pw, hash);
 
 export function passwordProblems(pw: string): string | null {

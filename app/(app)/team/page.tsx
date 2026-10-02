@@ -30,10 +30,10 @@ function Roster() {
   const admin = me.role === 'admin';
   const patch = async (m: Member, body: Record<string, unknown>, ok: string) => { try { await api.patch(`/api/team/members/${m.id}`, body); qc.invalidateQueries({ queryKey: ['members'] }); toast.ok(ok); } catch (e) { toast.error('That didn’t work', (e as ClientError).message); } };
   const reset = async (m: Member) => { if (!confirm(`Reset ${m.displayName}'s password? They'll be signed out everywhere.`)) return; try { const r = await api.post<{ temporaryPassword: string }>(`/api/team/members/${m.id}/reset-password`); setTemp({ name: m.displayName, pw: r.temporaryPassword }); } catch (e) { toast.error('Could not reset', (e as ClientError).message); } };
-  if (q.isLoading) return <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-40 rounded-[10px]" />)}</div>;
+  if (q.isLoading) return <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-40 rounded-[10px]" />)}</div>;
   return (
     <>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {q.data?.members.map((m) => (
           <article key={m.id} className={`card relative flex flex-col gap-2 rounded-[10px] p-4 ${m.disabled ? 'opacity-50' : ''}`}>
             <div className="flex items-center gap-3">
@@ -138,7 +138,7 @@ function TaskBoard() {
         <button className="btn btn-primary ml-auto h-9 text-[13px]" onClick={() => setAdding(true)}><Plus size={15} />New task</button>
       </div>
       {q.isLoading ? <Skeleton className="h-80 rounded-[10px]" /> : (
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
           {COLS.map(([status, label]) => {
             const col = tasks.filter((t) => t.status === status);
             return (

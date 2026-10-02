@@ -1,5 +1,6 @@
 'use client';
 import { create } from 'zustand';
+import { BASE } from './base';
 
 // ---------- Mentor drawer ----------
 interface MentorState {
@@ -48,7 +49,7 @@ let reader: any = null;
 let presenceTimer: any = null;
 
 async function presence(label: string | null) {
-  try { await fetch('/api/brain/presence', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ portLabel: label }) }); } catch { /* offline */ }
+  try { await fetch(`${BASE}/api/brain/presence`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ portLabel: label }) }); } catch { /* offline */ }
 }
 
 export const useBrain = create<BrainState>((set, get) => ({

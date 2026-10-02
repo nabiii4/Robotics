@@ -12,6 +12,7 @@ import { Drawer, Dialog } from '@/components/ui/Dialog';
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from '@/components/ui/Menu';
 import { toast } from '@/components/ui/Toast';
 import { usePrinters, fmtDuration, type PrinterView } from '@/components/printer/SendToPrinterDialog';
+import { BASE } from '@/lib/client/base';
 
 const MeshViewer = dynamic(() => import('@/components/viewer3d/MeshViewer'), { ssr: false, loading: () => <div className="h-full w-full bg-[#F4F6F8]" /> });
 
@@ -124,7 +125,7 @@ function JobDrawer({ id, onClose, printers, onFail }: { id: string; onClose: () 
           <div className="grid grid-cols-2 gap-2">
             <div className="h-[200px] overflow-hidden rounded-[8px] border border-line">{mesh.data ? <MeshViewer positions={mesh.data.positions} indices={mesh.data.indices} color={j.color} className="h-full w-full" /> : <div className="flex h-full items-center justify-center bg-[#F4F6F8]"><Spinner /></div>}</div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/api/print/jobs/${j.id}/thumb.png?size=lg`} alt={`${j.name} render`} className="h-[200px] w-full rounded-[8px] border border-line bg-[#F4F6F8] object-contain" />
+            <img src={`${BASE}/api/print/jobs/${j.id}/thumb.png?size=lg`} alt={`${j.name} render`} className="h-[200px] w-full rounded-[8px] border border-line bg-[#F4F6F8] object-contain" />
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2"><Badge tone={STATUS[j.status]?.tone}>{STATUS[j.status]?.label}</Badge>{j.legality && <Badge tone={j.legality.tone}>{j.legality.label}</Badge>}{j.printerAdapter === 'simulated' && <Badge tone="grey">Simulated printer</Badge>}{j.pickedUp && <Badge tone="green">Picked up</Badge>}</div>
           {(j.status === 'printing' || j.status === 'paused') && <div className="mt-3"><Progress value={j.progress} /><div className="mt-1 flex justify-between text-[12px] text-ink-500"><span>{Math.round(j.progress * 100)}%</span><span>{hm(j.remainingSec)} left</span></div></div>}
@@ -195,7 +196,7 @@ function PrinterInner() {
                   draggable={tab === 'active'} onDragStart={(e) => { setDragId(j.id); e.dataTransfer.effectAllowed = 'move'; }} onDragOver={(e) => { if (dragId) e.preventDefault(); }} onDrop={(e) => { e.preventDefault(); drop(j.id); }} onDragEnd={() => setDragId(null)}>
                   <td className="pl-2 text-ink-300">{tab === 'active' && <DotsSixVertical size={16} className="cursor-grab" aria-label="Drag to reorder" />}</td>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <td className="py-1.5"><img src={`/api/print/jobs/${j.id}/thumb.png`} alt="" className="h-11 w-14 rounded-md bg-[#F4F6F8] object-contain" /></td>
+                  <td className="py-1.5"><img src={`${BASE}/api/print/jobs/${j.id}/thumb.png`} alt="" className="h-11 w-14 rounded-md bg-[#F4F6F8] object-contain" /></td>
                   <td className="font-semibold text-ink-900">{j.name}{j.legality && <div><Badge tone={j.legality.tone} className="mt-0.5 scale-90 origin-left">{j.legality.label}</Badge></div>}</td>
                   <td className="text-ink-600">{j.material} · {j.layer}mm</td>
                   <td className="tabular">{j.quantity}</td>

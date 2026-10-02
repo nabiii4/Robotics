@@ -2,7 +2,7 @@ import { HubBanner, LogoB } from '@/components/brand/Brand';
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
+    <div className="grid grid-cols-1 min-h-screen lg:grid-cols-[1.1fr_1fr]">
       <div className="relative hidden overflow-hidden bg-[#0B0C0E] lg:block">
         <HubBanner className="absolute inset-0 h-full w-full" />
         <div className="absolute inset-x-12 bottom-14">

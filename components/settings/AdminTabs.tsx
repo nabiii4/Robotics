@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowsClockwise, CheckCircle, DownloadSimple, Eye, EyeSlash, FileArrowUp, Plus, Trash, Warning, XCircle } from '@phosphor-icons/react';
@@ -10,6 +11,7 @@ import { Switch } from '../ui/Switch';
 import { toast } from '../ui/Toast';
 import { Section } from './PersonalTabs';
 import { usePrinters, MATERIALS, type PrinterView } from '../printer/SendToPrinterDialog';
+import { BASE, LOCAL, SIGNED_OUT_KEY } from '@/lib/client/base';
 
 export function TeamAdminTab() {
   const qc = useQueryClient();
@@ -36,7 +38,7 @@ export function TeamAdminTab() {
           {show && q.data?.joinCode && <button className="btn btn-outline h-9" onClick={() => { navigator.clipboard.writeText(q.data!.joinCode!); toast.ok('Copied'); }}>Copy</button>}
           <button className="btn btn-outline h-9" onClick={rotate}><ArrowsClockwise size={16} />Rotate</button>
         </div>
-        <p className="mt-3 text-[12.5px] text-ink-500">Change member roles, reset passwords and deactivate accounts on the <a href="/team" className="font-semibold text-fdr-red underline">Team</a> roster.</p>
+        <p className="mt-3 text-[12.5px] text-ink-500">Change member roles, reset passwords and deactivate accounts on the <Link href="/team" className="font-semibold text-fdr-red underline">Team</Link> roster.</p>
       </Section>
     </>
   );
@@ -177,7 +179,7 @@ export function AiUsageTab() {
   return (
     <>
       <Section title="AI providers" desc="Requests try each target in order: Azure primary → primary fallback → backup → OpenAI.">
-        {d.mode.demo && <div className="mb-3 flex gap-2 rounded-md bg-[#FFF8E1] px-3 py-2 text-[13px] text-[#6B4E00]"><Warning size={18} className="shrink-0" />Demo mode: no AI keys are set (or AI_MOCK=1), so the mentor uses built-in answers. Add AZURE_OPENAI_* or OPENAI_API_KEY to .env and restart.</div>}
+        {d.mode.demo && <div className="mb-3 flex gap-2 rounded-md bg-[#FFF8E1] px-3 py-2 text-[13px] text-[#6B4E00]"><Warning size={18} className="shrink-0" />{LOCAL ? 'Demo mode: this GitHub Pages version runs entirely in your browser and can’t hold AI keys, so the mentor uses built-in answers. Host the app (DEPLOY.md) to use GPT.' : 'Demo mode: no AI keys are set (or AI_MOCK=1), so the mentor uses built-in answers. Add AZURE_OPENAI_* or OPENAI_API_KEY to .env and restart.'}</div>}
         {d.targets.length ? (
           <ul className="grid gap-2">{d.targets.map((t) => (
             <li key={t.name} className="flex flex-wrap items-center gap-3 rounded-[8px] border border-line px-4 py-2.5 text-[13px]">
@@ -228,7 +230,7 @@ export function KnowledgeTab() {
       {q.isLoading ? <Spinner /> : q.data?.docs.length ? (
         <table className="w-full text-[13px]"><thead className="text-left text-[11px] uppercase tracking-wider text-ink-500"><tr><th className="py-1">Document</th><th className="text-right">Sections</th><th className="text-right">Embedded</th><th className="text-right">Rule IDs</th><th /></tr></thead>
           <tbody className="divide-y divide-line">{q.data.docs.map((d) => <tr key={d.id}><td className="py-2">{d.title}<div className="text-[11.5px] text-ink-400">{d.filename}</div></td><td className="tabular text-right">{d.chunks}</td><td className="tabular text-right">{d.embedded ? d.embedded : <span className="text-ink-400">keyword</span>}</td><td className="tabular text-right">{d.ruleIds}</td><td className="text-right"><button className="btn btn-outline h-8 text-[12px]" disabled={busy === d.id} onClick={() => reindex(d.id)}>{busy === d.id ? <Spinner size={13} /> : <ArrowsClockwise size={14} />}Re-index</button></td></tr>)}</tbody></table>
-      ) : <p className="text-[13px] text-ink-500">No documents yet. Upload the Game Manual in <a className="font-semibold text-fdr-red underline" href="/resources">Resources</a> and switch on “Use for AI”.</p>}
+      ) : <p className="text-[13px] text-ink-500">No documents yet. Upload the Game Manual in <Link className="font-semibold text-fdr-red underline" href="/resources">Resources</Link> and switch on “Use for AI”.</p>}
     </Section>
   );
 }
@@ -242,18 +244,25 @@ export function DataTab() {
     if (!confirm('Importing replaces builds, parts, inventory, tasks, competitions and other team content with the file’s contents. Accounts stay the same. Continue?')) return;
     setBusy(true);
     try {
-      const r = await fetch('/api/admin/import', { method: 'POST', headers: { 'content-type': 'application/json' }, body: await f.text() });
+      const r = await fetch(`${BASE}/api/admin/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: await f.text() });
       const j = await r.json();
       if (!r.ok) throw new Error(j?.error?.message ?? 'Import failed');
       qc.invalidateQueries(); toast.ok('Import complete', `${Object.values(j.counts as Record<string, number>).reduce((a, b) => a + b, 0)} rows restored`);
     } catch (e) { toast.error('Import failed', (e as Error).message); } finally { setBusy(false); }
   };
+  const resetLocal = async () => {
+    if (!confirm('Delete all builds, parts, files and settings saved in this browser and start again with the demo team? Export first if you want to keep anything.')) return;
+    setBusy(true);
+    try { await api.post('/api/local/reset'); localStorage.removeItem(SIGNED_OUT_KEY); location.href = `${BASE}/`; }
+    catch (e) { toast.error('Reset failed', (e as Error).message); setBusy(false); }
+  };
   return (
-    <Section title="Data" desc="Back up everything regularly — especially before the season starts.">
+    <Section title="Data" desc={LOCAL ? 'This copy of the Hub is saved in this browser only. Export it to keep a backup or to move it to another computer.' : 'Back up everything regularly — especially before the season starts.'}>
       <div className="grid max-w-[640px] gap-3">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-line px-4 py-3"><span className="text-[13px]"><b>Export all data</b><span className="block text-[12px] text-ink-500">JSON of every table (passwords excluded)</span></span><button className="btn btn-outline h-9" onClick={() => download('/api/admin/export')}><DownloadSimple size={16} />Export JSON</button></div>
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-line px-4 py-3"><span className="text-[13px]"><b>Import</b><span className="block text-[12px] text-ink-500">Restore team content from an export file</span></span><input ref={file} type="file" accept="application/json,.json" className="hidden" onChange={(e) => { doImport(e.target.files?.[0]); e.target.value = ''; }} /><button className="btn btn-outline h-9" disabled={busy} onClick={() => file.current?.click()}>{busy ? <Spinner /> : <FileArrowUp size={16} />}Import JSON</button></div>
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-line px-4 py-3"><span className="text-[13px]"><b>Database backup</b><span className="block text-[12px] text-ink-500">A full copy of the SQLite database file</span></span><button className="btn btn-outline h-9" onClick={() => download('/api/admin/backup')}><DownloadSimple size={16} />Download backup</button></div>
+        {LOCAL && <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-line px-4 py-3"><span className="text-[13px]"><b>Start over</b><span className="block text-[12px] text-ink-500">Delete everything saved in this browser and reload the demo team</span></span><button className="btn btn-outline h-9 text-fdr-red" disabled={busy} onClick={resetLocal}><Trash size={16} />Reset this browser</button></div>}
       </div>
     </Section>
   );

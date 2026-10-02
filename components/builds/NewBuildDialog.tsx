@@ -9,6 +9,7 @@ import { Dialog } from '../ui/Dialog';
 import { Field, Spinner } from '../ui/bits';
 import { toast } from '../ui/Toast';
 import { useBuilds } from '../mentor/MentorDrawer';
+import { BASE } from '@/lib/client/base';
 
 type Program = 'V5RC' | 'VEXU' | 'VAIRC' | 'Practice';
 type StartKind = 'ai' | 'template' | 'duplicate' | 'import';
@@ -116,7 +117,7 @@ export function NewBuildDialog() {
     <Dialog open={open} onOpenChange={(o) => { if (!busy) setNewBuild(o); }} title="Start a New Build" description={`Step ${step} of 3 · ${['Name it', 'Choose a starting point', 'Review and create'][step - 1]}`} width={620} footer={footer}>
       {busy ? (
         <div className="flex flex-col items-center gap-4 py-10 text-center">
-          <img src="/brand/mentor-b.png" alt="" className="h-16 w-16 animate-pulse" />
+          <img src={`${BASE}/brand/mentor-b.png`} alt="" className="h-16 w-16 animate-pulse" />
           <div className="flex items-center gap-2 text-[15px] font-semibold text-ink-900"><Spinner />{kind === 'ai' ? STAGES[stage] : 'Creating your build…'}</div>
           {kind === 'ai' && <p className="max-w-[380px] text-[13px] text-ink-500">The mentor is designing a legal robot from your description. This usually takes 10–40 seconds.</p>}
         </div>

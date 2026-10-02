@@ -39,7 +39,7 @@ export function AssemblyTab({ d }: { d: Derived }) {
   }, [d.parts, d.bom, current, cmp.data]);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[260px_1fr_320px]">
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-[260px_1fr_320px]">
       <aside className="card h-fit max-h-[calc(100vh-260px)] overflow-y-auto rounded-[10px] p-2 scroll-thin">
         <div className="px-2 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wider text-ink-400">{steps.length} steps</div>
         {steps.map((st, i) => (

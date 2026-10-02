@@ -31,4 +31,16 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// GitHub Pages build (npm run build:pages): static pages only, built from a copy without app/api and middleware;
+// the API runs in a service worker instead (browser-server/).
+const staticExport = process.env.STATIC_EXPORT === '1';
+const pagesConfig = {
+  reactStrictMode: true,
+  output: 'export',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+  trailingSlash: true,
+  images: { unoptimized: true },
+  eslint: { ignoreDuringBuilds: true },
+};
+
+export default staticExport ? pagesConfig : nextConfig;

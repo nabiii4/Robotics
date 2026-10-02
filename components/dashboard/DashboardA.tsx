@@ -16,6 +16,7 @@ import { LazyRobotCanvas, ViewerToolbar, ViewPresets, useDerived, type Preset, t
 import { BlueprintPane, AssemblyMini, CodePane } from './BuildPanes';
 import { BrainStat, PrinterStat, QueueStat, StatusMenu, JobThumb, BlueprintThumb, CodeMini, SubsystemDot, useDashboard, type Dash } from './shared';
 import { useMe } from '../shell/AppShell';
+import { BASE } from '@/lib/client/base';
 
 type Tab = '3d' | 'blueprint' | 'assembly' | 'code';
 
@@ -252,7 +253,7 @@ function WorkspaceA({ d }: { d: Dash }) {
   const chips: [string, string][] = [['improve-intake', 'How can I improve my intake?'], ['which-motor', 'What motor should I use?'], ['explain-code', 'Explain this VEX code'], ['debug', 'Help me debug']];
   const codeStatus = !d.code || d.code.errors == null ? { dot: 'bg-ink-300', text: 'Not checked yet' } : d.code.errors ? { dot: 'bg-fdr-red', text: `${d.code.errors} error${d.code.errors > 1 ? 's' : ''}` } : { dot: 'bg-ok', text: 'No errors' };
   return (
-    <div className="grid gap-[13px] sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-[259px_238px_249px_248px] 3xl:gap-x-[13.5px]">
+    <div className="grid grid-cols-1 gap-[13px] sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-[259px_238px_249px_248px] 3xl:gap-x-[13.5px]">
       <section aria-label="Blueprints" className="card rounded-[10px] 3xl:h-[208px]">
         {head(FileText, 'Blueprints', <Link href="/builds?view=blueprints" className="text-[11px] font-semibold text-fdr-red hover:underline">See all</Link>)}
         <Link href={d.build ? `/builds/${d.build.id}?tab=blueprint` : '/builds'} className="mx-[13px] mt-[7px] block h-[130px] overflow-hidden rounded-[4px]" aria-label="Open the assembly blueprint"><BlueprintThumb parts={derived.data?.parts} layout="a" className="h-full w-full" /></Link>
@@ -279,7 +280,7 @@ function WorkspaceA({ d }: { d: Dash }) {
         {head(Robot, 'AI Build Mentor', <button onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="text-[11px] font-medium text-fdr-red underline underline-offset-2">Ask anything</button>)}
         <div className="flex flex-wrap items-start gap-3 px-[9px] pb-3 3xl:block">
           <div className="shrink-0">
-            <button aria-label="Open AI Build Mentor" onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="mt-[8px] block"><img src="/brand/mentor-a.png" alt="" className="h-[123px] w-[88px] object-contain" /></button>
+            <button aria-label="Open AI Build Mentor" onClick={() => openMentor({ buildId: d.build?.id ?? null })} className="mt-[8px] block"><img src={`${BASE}/brand/mentor-a.png`} alt="" className="h-[123px] w-[88px] object-contain" /></button>
             <div className="ml-[3px] mt-[3px] text-[8.5px] font-semibold leading-[12px] tracking-[.2em] text-ink-400">POWERED BY AI<br />BUILT BY COUGARS</div>
           </div>
           {/* bubble + chips: inside the card below 1600 px, spilling into the page at ≥1600 px (reference composition) */}
@@ -328,7 +329,7 @@ export function DashboardA() {
         </div>
       </div>
       {/* main row */}
-      <div className="mt-5 grid gap-[13px] lg:grid-cols-2 3xl:mt-0 3xl:grid-cols-[676fr_352fr_336fr] 3xl:gap-x-[14px]">
+      <div className="mt-5 grid grid-cols-1 gap-[13px] lg:grid-cols-2 3xl:mt-0 3xl:grid-cols-[676fr_352fr_336fr] 3xl:gap-x-[14px]">
         <div className="lg:col-span-2 3xl:col-span-1">{isLoading || !d ? <Skeleton className="h-[387px] rounded-[10px]" /> : d.build ? <ActiveBuildA d={d} /> : <section className="card flex h-[387px] items-center justify-center rounded-[10px]"><EmptyState icon={<Cube size={40} />} text="No active build yet" action={<button className="btn btn-primary h-10 px-4" onClick={() => openNew(true)}><Plus size={16} />Start a New Build</button>} /></section>}</div>
         {d ? <QueueA d={d} /> : <Skeleton className="h-[387px] rounded-[10px]" />}
         <div className="flex flex-col gap-[14px]">

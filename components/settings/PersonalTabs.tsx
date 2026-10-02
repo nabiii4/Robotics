@@ -60,7 +60,7 @@ export function AppearanceTab() {
       <div className="grid max-w-[640px] gap-6">
         <div>
           <div className="label mb-2">Dashboard layout</div>
-          <div className="grid gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {([['b', 'Hub (B)', 'Top tabs, big hero — the default'], ['a', 'Sidebar (A)', 'Left sidebar with every section'], ['auto', 'Auto', 'Sidebar on screens ≥ 1600 px, otherwise Hub']] as const).map(([v, l, t]) => (
               <button key={v} aria-pressed={(me.prefs.layout ?? 'b') === v} onClick={() => save({ layout: v })} className={`rounded-[8px] border p-3 text-left ${(me.prefs.layout ?? 'b') === v ? 'border-fdr-red bg-[#FFF5F5]' : 'border-line hover:border-ink-300'}`}>
                 <div className={`mb-2 h-14 rounded-md border border-line bg-[#F2F4F3] p-1.5 ${v === 'a' ? 'flex gap-1' : ''}`}>

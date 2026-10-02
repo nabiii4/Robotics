@@ -126,7 +126,7 @@ export function BlueprintTab({ d }: { d: Derived }) {
   };
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[220px_1fr]">
       <aside className="card h-fit rounded-[10px] p-2">
         <div className="px-2 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wider text-ink-400">Sheets</div>
         {sheets.map((s, i) => (

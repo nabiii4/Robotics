@@ -10,6 +10,8 @@ The web app for the Franklin D. Roosevelt High School Cougars VEX V5 robotics cl
 
 Around that, the team runs its print queue, parts inventory, task board, competitions and documents.
 
+**Open it now (free, nothing to install or sign up for): <https://nabiii4.github.io/Robotics/>.** This GitHub Pages version runs entirely in your browser, and everything you do is saved on that device. See [DEPLOY.md](DEPLOY.md#github-pages-free-runs-in-the-browser) for what that means and how to get a shared team site.
+
 Both dashboard designs are built in. **Hub (B)** is the default; **Sidebar (A)** can be chosen per person in *Settings → Appearance* or from the avatar menu. **Auto** uses the Sidebar layout on screens 1600 px and wider.
 
 ## Quick start
@@ -30,7 +32,11 @@ On the first run, the seed writes **`data/seed-credentials.txt`**. It contains:
 
 New students sign up at `/join` with the join code.
 
-**To put it online for the team, follow [DEPLOY.md](DEPLOY.md).** The free option (Vercel + Turso, no credit card) takes about 10 minutes in the browser. It also covers paid hosting (Render, Railway) and running it on a school computer with Docker.
+**To put it online for the team, follow [DEPLOY.md](DEPLOY.md).** It covers:
+
+- the GitHub Pages link (already built; one setting to switch on);
+- a shared team site with real accounts and GPT (Vercel + Turso, free, no credit card, about 10 minutes in the browser);
+- paid hosting (Render, Railway) and running it on a school computer with Docker.
 
 To run in production yourself:
 
@@ -49,6 +55,7 @@ npm start                     # runs migrations/seed if needed, then next start
 | `npm test` | Unit tests (metrics golden values, rules, generator, codegen + g++, printing, compiler checks, auton, CSV) |
 | `npm run typecheck` | TypeScript |
 | `npm run backup` | Copy the SQLite database to `data/backups/` |
+| `npm run build:pages` | Rebuild the GitHub Pages version into `docs/` (commit the result to update the site) |
 
 ## Connecting the AI (GPT models)
 

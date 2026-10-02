@@ -34,7 +34,7 @@ export async function compileProject(files: ProjectFile[], devices: string[], gx
   const lint = vexLint(code, devices).filter((d) => d.severity === 'warning');
   if (!(await hasGxx(gxx))) {
     const diags = [...code.flatMap(syntaxCheck), ...vexLint(code, devices)];
-    return { ok: !diags.some((d) => d.severity === 'error'), engine: 'Checked (syntax + VEX rules)', diagnostics: diags, log: 'g++ is not installed on this server — ran the built-in checker instead.\n' + diags.map((d) => `${d.file}:${d.line}:${d.col}: ${d.severity}: ${d.message}`).join('\n') };
+    return { ok: !diags.some((d) => d.severity === 'error'), engine: 'Checked (syntax + VEX rules)', diagnostics: diags, log: 'g++ isn’t available here — ran the built-in checker instead.\n' + diags.map((d) => `${d.file}:${d.line}:${d.col}: ${d.severity}: ${d.message}`).join('\n') };
   }
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fdrhs-vex-'));
   try {

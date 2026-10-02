@@ -50,7 +50,7 @@ export function SpecsTab({ d, buildId }: { d: Derived; buildId: string }) {
   };
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[380px_1fr]">
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-[380px_1fr]">
       <section className="card h-fit rounded-[10px] p-4">
         <h3 className="mb-2 text-[14px] font-bold text-ink-900">Metrics</h3>
         <dl className="divide-y divide-line">
