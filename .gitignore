@@ -1,0 +1,15 @@
+# Secrets: API keys live only here (never commit)
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Local database
+*.db
+
+# OS / editor
+.DS_Store
